@@ -1,0 +1,2 @@
+GET   /self-assessment-prepop/individual/:utr/status        @controllers.MarriageAllowanceStatus.fetch(utr, taxYear)
+GET   /self-assessment-prepop/individual/:utr/eligibility   @controllers.MarriageAllowanceEligibility.fetch(utr, nino, firstname, dateOfBirth, taxYear)
