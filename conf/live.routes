@@ -1,2 +1,2 @@
-GET   /marriage-allowance/sa/:utr/status        @controllers.MarriageAllowanceStatus.fetch(utr, taxYear)
-GET   /marriage-allowance/sa/:utr/eligibility   @controllers.MarriageAllowanceEligibility.fetch(utr, nino, firstname, surname, dateOfBirth, taxYear)
+GET   /marriage-allowance/individual/:utr/status        @controllers.MarriageAllowanceStatus.fetch(utr, taxYearStart)
+GET   /marriage-allowance/citizen/:nino/eligibility     @controllers.MarriageAllowanceEligibility.fetch(utr, nino, firstname, surname, dateOfBirth, taxYear)
