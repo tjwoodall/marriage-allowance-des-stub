@@ -19,12 +19,21 @@ class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with O
   }
 
   "fetch" should {
+    "return the eligible happy path response when called with a utr, AA000003D, firstname, surname, dateOfBirth and taxYear" in new Setup {
 
-    "return the happy path response when called with a utr, nino, firstname, surname, dateOfBirth and taxYear" in new Setup {
-
-      val expected = loadResource("/resources/marriage-allowance-eligibility/happy_path.json")
+      val expected = loadResource("/resources/marriage-allowance-eligibility/happy_path_eligible.json")
 
       val result = await(underTest.fetch("2234567890", "AA000003D", "John", "Smith", "1981-01-31", "2014-15")(request))
+
+      status(result) shouldBe Status.OK
+      jsonBodyOf(result) shouldBe Json.parse(expected)
+    }
+
+    "return the ineligible happy path response when called with a utr, AA000004C, firstname, surname, dateOfBirth and taxYear" in new Setup {
+
+      val expected = loadResource("/resources/marriage-allowance-eligibility/happy_path_ineligible.json")
+
+      val result = await(underTest.fetch("2234567890", "AA000004C", "John", "Smith", "1981-01-31", "2014-15")(request))
 
       status(result) shouldBe Status.OK
       jsonBodyOf(result) shouldBe Json.parse(expected)
