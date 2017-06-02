@@ -23,7 +23,7 @@ class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with O
 
       val expected = loadResource("/resources/marriage-allowance-eligibility/happy_path_eligible.json")
 
-      val result = await(underTest.fetch("2234567890", "AA000003D", "John", "Smith", "1981-01-31", "2014-15")(request))
+      val result = await(underTest.fetch("AA000003D", "John", "Smith", "1981-01-31", "2014-15")(request))
 
       status(result) shouldBe Status.OK
       jsonBodyOf(result) shouldBe Json.parse(expected)
@@ -33,7 +33,7 @@ class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with O
 
       val expected = loadResource("/resources/marriage-allowance-eligibility/happy_path_ineligible.json")
 
-      val result = await(underTest.fetch("2234567890", "AA000004C", "John", "Smith", "1981-01-31", "2014-15")(request))
+      val result = await(underTest.fetch("AA000004C", "John", "Smith", "1981-01-31", "2014-15")(request))
 
       status(result) shouldBe Status.OK
       jsonBodyOf(result) shouldBe Json.parse(expected)
