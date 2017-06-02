@@ -8,7 +8,7 @@ import uk.gov.hmrc.play.microservice.controller.BaseController
 import scala.concurrent.Future
 
 class MarriageAllowanceEligibility extends BaseController with StubResource {
-  def fetch(utr: String, nino: String, firstname: String, surname: String, dateOfBirth: String, taxYear: String) = Action.async {
+  def fetch(nino: String, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String) = Action.async {
     implicit request =>
       val eligibleDataSetPath = "/resources/marriage-allowance-eligibility/happy_path_eligible.json"
       val ineligibleDataSetPath = "/resources/marriage-allowance-eligibility/happy_path_ineligible.json"
