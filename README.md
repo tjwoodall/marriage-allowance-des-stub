@@ -10,7 +10,7 @@ This code is open source software licensed under the [Apache 2.0 License]("http:
 
 # Marriage Allowance DES Stub
 
-The External Test DES Stub is a service to support stateful sandbox testing in the
+The Marriage Allowance DES Stub is a service to support stateless sandbox testing in the
 External Test environment. It stubs the behaviour of DES in order that an API microservice
 is able to implement only a single set of routes regardless of whether it is being called
 in a test or production environment.
@@ -20,12 +20,10 @@ API microservices deployed to the External Test environment should be configured
 to this stub instead of a real DES.
 
 API microservices which this stubs behaviour for are:
-* [Individual Benefits](https://github.tools.tax.service.gov.uk/HMRC/individual-benefits)
+* [Marriage Allowance](https://github.tools.tax.service.gov.uk/HMRC/marriage-allowance)
 
 
 ## What does this service use?
-* [Datastream](https://github.tools.tax.service.gov.uk/HMRC/datastream) (for Audit)
-* Metrics/Grafana
 
 ## Running the tests
 ```
@@ -39,6 +37,18 @@ To run the service locally on port `9650`:
 ./run_local.sh
 ```
 
-To test the stub endpoint for Individual Benefits:
+To test the stub endpoint for Marriage Allowance status:
 ```
-curl -X GET http://localhost:9650/self-assessment-prepop/individual/2234567890/benefits/tax-year/2014-15
+curl -X GET http://localhost:9650/marriage-allowance/individual/1111111111/status?taxYearStart=2014-15
+```
+
+To test the stub endpoint for Marriage Allowance eligibility with an elilgible response:
+```
+curl -X get http://localhost:9650/marriage-allowance/citizen/AA000003D/eligibility?taxYearStart=2014-15&firstname=John&surname=Smith&dateOfBirth=01/01/1990
+```
+
+To test the stub endpoint for Marriage Allowance eligibility with an inelilgible response:
+```
+curl -X get http://localhost:9650/marriage-allowance/citizen/AA000004C/eligibility?taxYearStart=2014-15&firstname=John&surname=Smith&dateOfBirth=01/01/1990
+```
+
