@@ -33,6 +33,6 @@ class MarriageAllowanceStatus extends BaseController with StubResource {
   }
 
   def create(utr: SaUtr, taxYear: TaxYear) = Action async {
-    Future(Created)
+    Future.successful(Created)
   }
 }

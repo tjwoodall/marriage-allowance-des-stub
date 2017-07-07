@@ -20,7 +20,7 @@ import scala.util.matching.Regex
 import scala.util.matching.Regex.Match
 
 case class TaxYear(ty: String) {
-  if(!TaxYear.isValid(ty)) throw new IllegalArgumentException
+  require(TaxYear.isValid(ty))
 
   val startYr = ty.split("-")(0)
   val endYr = (startYr.toInt + 1).toString

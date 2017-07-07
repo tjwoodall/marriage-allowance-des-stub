@@ -39,6 +39,6 @@ final class MarriageAllowanceEligibility extends BaseController with StubResourc
   }
 
   def create(utr: SaUtr, taxYear: TaxYear) = Action async {
-    Future(Created)
+    Future.successful(Created)
   }
 }
