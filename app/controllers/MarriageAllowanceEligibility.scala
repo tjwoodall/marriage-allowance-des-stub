@@ -32,8 +32,8 @@ final class MarriageAllowanceEligibility extends BaseController with StubResourc
       val ineligibleDataSetPath = "/resources/marriage-allowance-eligibility/happy_path_ineligible.json"
 
       utr match {
-        case "1111111111" => Future(jsonResourceAsResponse(eligibleDataSetPath))
-        case "2222222222" => Future(jsonResourceAsResponse(ineligibleDataSetPath))
+        case "1111111111" => Future.successful(jsonResourceAsResponse(eligibleDataSetPath))
+        case "2222222222" => Future.successful(jsonResourceAsResponse(ineligibleDataSetPath))
         case _ => Future.failed(new Exception(s"National Insurance Number $nino is not supported by this API"))
       }
   }

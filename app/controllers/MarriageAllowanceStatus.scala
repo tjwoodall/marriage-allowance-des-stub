@@ -29,7 +29,7 @@ class MarriageAllowanceStatus extends BaseController with StubResource {
   def fetch(utr: String, taxYearStart: String) = Action.async {
     implicit request =>
       val dataSetPath = "/resources/marriage-allowance-status/happy_path.json"
-      Future(jsonResourceAsResponse(dataSetPath))
+      Future.successful(jsonResourceAsResponse(dataSetPath))
   }
 
   def create(utr: SaUtr, taxYear: TaxYear) = Action async {
