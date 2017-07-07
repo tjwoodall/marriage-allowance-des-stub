@@ -1,2 +1,5 @@
-GET   /marriage-allowance/individual/:utr/status        @controllers.MarriageAllowanceStatus.fetch(utr, taxYearStart)
-GET   /marriage-allowance/citizen/:nino/eligibility     @controllers.MarriageAllowanceEligibility.fetch(nino, firstname, surname, dateOfBirth, taxYearStart)
+GET   /sa/:utr/status                                   @controllers.MarriageAllowanceStatus.fetch(utr, taxYearStart)
+POST  /sa/:utr/status/:taxYear                          @controllers.MarriageAllowanceStatus.create(utr: uk.gov.hmrc.domain.SaUtr, taxYear: models.TaxYear)
+
+GET   /sa/:utr/eligibility                              @controllers.MarriageAllowanceEligibility.fetch(utr, nino, firstname, surname, dateOfBirth, taxYearStart)
+POST  /sa/:utr/eligibility/:taxYear                     @controllers.MarriageAllowanceEligibility.create(utr: uk.gov.hmrc.domain.SaUtr, taxYear: models.TaxYear)

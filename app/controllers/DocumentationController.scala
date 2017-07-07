@@ -16,23 +16,20 @@
 
 package controllers
 
-import common.StubResource
-import models.TaxYear
+import javax.inject.Inject
+
+import models.APIAccess
+import play.api.Configuration
+import play.api.http.HttpErrorHandler
 import play.api.mvc.Action
-import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.microservice.controller.BaseController
+import views.txt
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+class DocumentationController @Inject()(httpErrorHandler: HttpErrorHandler, configuration: Configuration) extends AssetsBuilder(httpErrorHandler) with BaseController {
 
-class MarriageAllowanceStatus extends BaseController with StubResource {
-  def fetch(utr: String, taxYearStart: String) = Action.async {
-    implicit request =>
-      val dataSetPath = "/resources/marriage-allowance-status/happy_path.json"
-      Future.successful(jsonResourceAsResponse(dataSetPath))
+  def definition = Action {
+    Ok(txt.definition(APIAccess.build(configuration.getConfig("api.access")))).withHeaders(CONTENT_TYPE -> JSON)
   }
 
-  def create(utr: SaUtr, taxYear: TaxYear) = Action async {
-    Future.successful(Created)
-  }
+  final def raml(version: String, file: String) = super.at(s"/public/api/conf/$version", file)
 }
