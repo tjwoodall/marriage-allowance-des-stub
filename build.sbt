@@ -54,6 +54,7 @@ lazy val microservice = (project in file("."))
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(routesImport += "controllers.Binders._")
+  .settings(unmanagedResourceDirectories in Compile += baseDirectory.value / "resources")
   .settings(
     name := appName,
     scalaVersion := "2.11.11",
