@@ -17,22 +17,28 @@
 package controllers
 
 import common.StubResource
-import play.api.mvc.Action
-import uk.gov.hmrc.play.http.logging.MdcLoggingExecutionContext._
+import models.TaxYear
+import play.api.mvc._
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.microservice.controller.BaseController
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MarriageAllowanceEligibility extends BaseController with StubResource {
-  def fetch(nino: String, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String) = Action.async {
+final class MarriageAllowanceEligibility extends BaseController with StubResource {
+  def fetch(utr: String, nino: String, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String) = Action async {
     implicit request =>
       val eligibleDataSetPath = "/resources/marriage-allowance-eligibility/happy_path_eligible.json"
       val ineligibleDataSetPath = "/resources/marriage-allowance-eligibility/happy_path_ineligible.json"
 
-      nino match {
-        case "AA000003D" => Future(jsonResourceAsResponse(eligibleDataSetPath))
-        case "AA000004C" => Future(jsonResourceAsResponse(ineligibleDataSetPath))
+      utr match {
+        case "1111111111" => Future(jsonResourceAsResponse(eligibleDataSetPath))
+        case "2222222222" => Future(jsonResourceAsResponse(ineligibleDataSetPath))
         case _ => Future.failed(new Exception(s"National Insurance Number $nino is not supported by this API"))
       }
+  }
+
+  def create(utr: SaUtr, taxYear: TaxYear) = Action async {
+    Future(Created)
   }
 }

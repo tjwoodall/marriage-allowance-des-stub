@@ -11,6 +11,13 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning
 import _root_.play.sbt.routes.RoutesKeys.routesGenerator
 
+lazy val microserviceBootstrapVersion = "5.13.0"
+lazy val playConfigVersion = "4.2.0"
+lazy val playHealthVersion = "2.1.0"
+lazy val playUiVersion = "7.2.1"
+lazy val logbackJsonLoggerVersion = "3.1.0"
+lazy val domainVersion = "4.1.0"
+
 lazy val appName = "marriage-allowance-des-stub"
 lazy val appVersion = envOrElse("PAYE_DES_STUB_VERSION", "999-SNAPSHOT")
 
@@ -18,10 +25,12 @@ lazy val appDependencies: Seq[ModuleID] = compile ++ test
 
 lazy val compile = Seq(
   ws,
-  "uk.gov.hmrc" %% "microservice-bootstrap" % "5.13.0",
-  "uk.gov.hmrc" %% "play-health" % "2.1.0",
-  "uk.gov.hmrc" %% "play-config" % "4.2.0",
-  "uk.gov.hmrc" %% "logback-json-logger" % "3.1.0"
+  "uk.gov.hmrc" %% "microservice-bootstrap" % microserviceBootstrapVersion,
+  "uk.gov.hmrc" %% "play-config" % playConfigVersion,
+  "uk.gov.hmrc" %% "play-health" % playHealthVersion,
+  "uk.gov.hmrc" %% "play-ui" % playUiVersion,
+  "uk.gov.hmrc" %% "logback-json-logger" % logbackJsonLoggerVersion,
+  "uk.gov.hmrc" %% "domain" % domainVersion
 )
 
 lazy val scope: String = "test"
@@ -44,6 +53,7 @@ lazy val microservice = (project in file("."))
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
+  .settings(routesImport += "controllers.Binders._")
   .settings(
     name := appName,
     scalaVersion := "2.11.11",
