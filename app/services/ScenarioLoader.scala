@@ -14,25 +14,27 @@
  * limitations under the License.
  */
 
-package controllers
+package services
 
-import common.StubResource
-import models.TaxYear
-import play.api.mvc.Action
-import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import models.InvalidScenarioException
+import play.api.libs.json.{Json, Reads}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MarriageAllowanceStatus extends BaseController with StubResource {
-  def fetch(utr: String, taxYearStart: String) = Action.async {
-    implicit request =>
-      val dataSetPath = "/resources/marriage-allowance-status/happy_path.json"
-      Future.successful(jsonResourceAsResponse(dataSetPath))
+trait ScenarioLoader {
+
+  private def pathForScenario(api: String, scenario: String) = {
+    s"/public/scenarios/$api/$scenario.json"
   }
 
-  def create(utr: SaUtr, taxYear: TaxYear) = Action async {
-    Future.successful(Created)
+  def loadScenario[T: Reads](api: String, scenario: String): Future[T] = {
+    val resource = getClass.getResourceAsStream(pathForScenario(api, scenario))
+    if (resource == null) {
+      Future.failed(new InvalidScenarioException(scenario))
+    } else {
+      Future.successful(Json.parse(resource).as[T])
+    }
   }
 }
+
+class ScenarioLoaderImpl extends ScenarioLoader

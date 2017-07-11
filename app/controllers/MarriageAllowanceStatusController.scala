@@ -1,0 +1,69 @@
+/*
+ * Copyright 2017 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers
+
+import javax.inject.Inject
+
+import common.StubResource
+import models.{InvalidScenarioException, JsonErrorResponse, MarriageAllowanceStatusCreationRequest, MarriageAllowanceStatusSummaryResponse, TaxYear}
+import play.api.Logger
+import play.api.libs.json.Json
+import play.api.mvc.Action
+import services.{MarriageAllowanceStatusService, MarriageAllowanceStatusServiceImpl, ScenarioLoader, ScenarioLoaderImpl}
+import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.play.microservice.controller.BaseController
+
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
+trait MarriageAllowanceStatusController extends BaseController with StubResource {
+  val scenarioLoader: ScenarioLoader
+  val service: MarriageAllowanceStatusService
+
+  final def find(utr: SaUtr, taxYear: TaxYear) = Action async {
+    service.fetch(utr.utr, taxYear.startYr) map {
+      case Some(result) => Ok(Json.toJson(result.response))
+      case _ => NotFound
+    } recover {
+      case e =>
+        Logger.error("An error occurred while finding test data", e)
+        InternalServerError
+    }
+  }
+
+  final def create(utr: SaUtr, taxYear: TaxYear) = Action.async(parse.json) { implicit request =>
+    withJsonBody[MarriageAllowanceStatusCreationRequest] { createStatusRequest =>
+      val scenario = createStatusRequest.scenario.getOrElse("HAPPY_PATH_1")
+
+      for {
+        scenario <- scenarioLoader.loadScenario[MarriageAllowanceStatusSummaryResponse]("marriage-allowance-status", scenario)
+        _ <- service.create(utr.utr, taxYear.startYr, scenario)
+      } yield Created(Json.toJson(scenario))
+
+    } recover {
+      case _: InvalidScenarioException  =>  BadRequest(JsonErrorResponse("UNKNOWN_SCENARIO", "Unknown test scenario"))
+      case e                            =>  {
+        Logger.error("An error occurred while creating test data", e)
+        InternalServerError
+      }
+    }
+  }
+}
+
+final class MarriageAllowanceStatusControllerImpl @Inject()(override val scenarioLoader: ScenarioLoaderImpl,
+                                                            override val service: MarriageAllowanceStatusServiceImpl)
+  extends MarriageAllowanceStatusController

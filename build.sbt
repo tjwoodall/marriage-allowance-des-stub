@@ -17,6 +17,7 @@ lazy val playHealthVersion = "2.1.0"
 lazy val playUiVersion = "7.2.1"
 lazy val logbackJsonLoggerVersion = "3.1.0"
 lazy val domainVersion = "4.1.0"
+lazy val playReactiveMongoVersion = "5.2.0"
 
 lazy val appName = "marriage-allowance-des-stub"
 lazy val appVersion = envOrElse("PAYE_DES_STUB_VERSION", "999-SNAPSHOT")
@@ -30,7 +31,8 @@ lazy val compile = Seq(
   "uk.gov.hmrc" %% "play-health" % playHealthVersion,
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "logback-json-logger" % logbackJsonLoggerVersion,
-  "uk.gov.hmrc" %% "domain" % domainVersion
+  "uk.gov.hmrc" %% "domain" % domainVersion,
+  "uk.gov.hmrc" %% "play-reactivemongo" % playReactiveMongoVersion
 )
 
 lazy val scope: String = "test"
