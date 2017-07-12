@@ -38,7 +38,10 @@ object MarriageAllowanceStatusRepository extends MongoDbConnection {
 class MarriageAllowanceStatusMongoRepository(implicit mongo: () => DB) extends ReactiveRepository[MarriageAllowanceStatusSummary, BSONObjectID]("marriage-allowance-status", mongo,
   marriageAllowanceStatusSummaryFormat, objectIdFormat) with MarriageAllowanceStatusRepository {
   override def store[T <: MarriageAllowanceStatusSummary](marriageAllowanceStatusSummary: T): Future[T] =
-    insert(marriageAllowanceStatusSummary) map {_ => marriageAllowanceStatusSummary}
+    for{
+      _ <- remove("utr" -> marriageAllowanceStatusSummary.utr, "taxYear" -> marriageAllowanceStatusSummary.taxYear)
+      _ <- insert(marriageAllowanceStatusSummary)
+    } yield marriageAllowanceStatusSummary
 
   override def fetch(utr: String, taxYear: String): Future[Option[MarriageAllowanceStatusSummary]] =
     find("utr" -> utr, "taxYear" -> taxYear) map(_.headOption)

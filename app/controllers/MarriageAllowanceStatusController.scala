@@ -28,14 +28,13 @@ import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.microservice.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 trait MarriageAllowanceStatusController extends BaseController with StubResource {
   val scenarioLoader: ScenarioLoader
   val service: MarriageAllowanceStatusService
 
-  final def find(utr: SaUtr, taxYear: TaxYear) = Action async {
-    service.fetch(utr.utr, taxYear.startYr) map {
+  final def find(utr: SaUtr, taxYearStart: String) = Action async {
+    service.fetch(utr.utr, taxYearStart) map {
       case Some(result) => Ok(Json.toJson(result.response))
       case _ => NotFound
     } recover {
@@ -52,14 +51,13 @@ trait MarriageAllowanceStatusController extends BaseController with StubResource
       for {
         scenario <- scenarioLoader.loadScenario[MarriageAllowanceStatusSummaryResponse]("marriage-allowance-status", scenario)
         _ <- service.create(utr.utr, taxYear.startYr, scenario)
-      } yield Created(Json.toJson(scenario))
+      } yield Created.as(JSON)
 
     } recover {
       case _: InvalidScenarioException  =>  BadRequest(JsonErrorResponse("UNKNOWN_SCENARIO", "Unknown test scenario"))
-      case e                            =>  {
+      case e                            =>
         Logger.error("An error occurred while creating test data", e)
         InternalServerError
-      }
     }
   }
 }

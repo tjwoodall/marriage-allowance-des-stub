@@ -16,7 +16,7 @@
 
 package services
 
-import models.MarriageAllowanceEligibilitySummaryResponse
+import models.{MarriageAllowanceEligibilitySummary, MarriageAllowanceEligibilitySummaryResponse}
 import repositories.MarriageAllowanceEligibilityRepository
 
 import scala.concurrent.Future
@@ -24,12 +24,11 @@ import scala.concurrent.Future
 trait MarriageAllowanceEligibilityService {
   val repository: MarriageAllowanceEligibilityRepository
 
-//  def create(utr: String, taxYear: String, marriageAllowanceEligibilitySummaryResponse: MarriageAllowanceEligibilitySummaryResponse): Future[MarriageAllowanceEligibilitySummary] = {
-//    repository.store(MarriageAllowanceEligibilitySummary(utr, taxYear, marriageAllowanceStatusSummaryResponse))
-//    ???
-//  }
+  def create(utr: String, taxYear: String, response: MarriageAllowanceEligibilitySummaryResponse): Future[MarriageAllowanceEligibilitySummary] = {
+    repository.store(MarriageAllowanceEligibilitySummary(utr, taxYear, response))
+  }
 
-  def fetch(utr: String, taxYear: String): Future[Option[MarriageAllowanceEligibilitySummaryResponse]] = {
+  def fetch(utr: String, taxYear: String): Future[Option[MarriageAllowanceEligibilitySummary]] = {
     repository.fetch(utr, taxYear)
   }
 }

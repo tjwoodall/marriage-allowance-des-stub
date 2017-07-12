@@ -23,20 +23,19 @@ import models._
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
-import services.{MarriageAllowanceEligibilityService, ScenarioLoader, ScenarioLoaderImpl}
+import services.{MarriageAllowanceEligibilityService, MarriageAllowanceEligibilityServiceImpl, ScenarioLoader, ScenarioLoaderImpl}
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.microservice.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
 trait MarriageAllowanceEligibilityController extends BaseController with StubResource {
   val scenarioLoader: ScenarioLoader
   val service: MarriageAllowanceEligibilityService
 
-  final def find(utr: String, taxYear: String) = Action async {
-    service.fetch(utr, taxYear) map {
-      case Some(result) => Ok(Json.toJson(result))
+  final def find(utr: SaUtr, taxYear: TaxYear) = Action async {
+    service.fetch(utr.utr, taxYear.startYr) map {
+      case Some(result) => Ok(Json.toJson(result.response))
       case _ => NotFound
     } recover {
       case e =>
@@ -45,11 +44,24 @@ trait MarriageAllowanceEligibilityController extends BaseController with StubRes
     }
   }
 
-  final def create(utr: SaUtr, taxYear: TaxYear) = Action async {
-    Future.successful(Created)
+  final def create(utr: SaUtr, taxYear: TaxYear) = Action.async(parse.json) { implicit request =>
+    withJsonBody[MarriageAllowanceEligibilityCreationRequest] { createEligibilityRequest =>
+      val scenario = createEligibilityRequest.scenario.getOrElse("HAPPY_PATH_1")
+
+      for {
+        scenario <- scenarioLoader.loadScenario[MarriageAllowanceEligibilitySummaryResponse]("marriage-allowance-eligibility", scenario)
+        _ <- service.create(utr.utr, taxYear.startYr, scenario)
+      } yield Created.as(JSON)
+
+    } recover {
+      case _: InvalidScenarioException  =>  BadRequest(JsonErrorResponse("UNKNOWN_SCENARIO", "Unknown test scenario"))
+      case e                            =>
+        Logger.error("An error occurred while creating test data", e)
+        InternalServerError
+    }
   }
 }
 
 final class MarriageAllowanceEligibilityControllerImpl @Inject()(override val scenarioLoader: ScenarioLoaderImpl,
-                                                                 override val service: MarriageAllowanceEligibilityService)
+                                                                 override val service: MarriageAllowanceEligibilityServiceImpl)
   extends MarriageAllowanceEligibilityController
