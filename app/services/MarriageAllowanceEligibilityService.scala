@@ -24,12 +24,12 @@ import scala.concurrent.Future
 trait MarriageAllowanceEligibilityService {
   val repository: MarriageAllowanceEligibilityRepository
 
-  def create(utr: String, taxYear: String, response: MarriageAllowanceEligibilitySummaryResponse): Future[MarriageAllowanceEligibilitySummary] = {
-    repository.store(MarriageAllowanceEligibilitySummary(utr, taxYear, response))
+  def create(nino: String, taxYearStart: String, firstname: String, surname: String, dateOfBirth: String, eligible: Boolean): Future[MarriageAllowanceEligibilitySummary] = {
+    repository.store(MarriageAllowanceEligibilitySummary(nino, taxYearStart, firstname, surname, dateOfBirth, eligible))
   }
 
-  def fetch(utr: String, taxYear: String): Future[Option[MarriageAllowanceEligibilitySummary]] = {
-    repository.fetch(utr, taxYear)
+  def fetch(nino: String, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String): Future[Option[MarriageAllowanceEligibilitySummary]] = {
+    repository.fetch(nino, taxYearStart)
   }
 }
 

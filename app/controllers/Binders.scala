@@ -18,7 +18,7 @@ package controllers
 
 import models.TaxYear
 import play.api.mvc.PathBindable
-import uk.gov.hmrc.domain.SaUtr
+import uk.gov.hmrc.domain.{Nino, SaUtr}
 import uk.gov.hmrc.referencechecker.SelfAssessmentReferenceChecker
 
 object Binders {
@@ -45,6 +45,19 @@ object Binders {
         Right(TaxYear(value))
       } else {
         Left("ERROR_TAX_YEAR_INVALID")
+      }
+    }
+  }
+
+  implicit def ninoBinder(implicit stringBinder: PathBindable[String]) = new PathBindable[Nino] {
+
+    override def unbind(key: String, nino: Nino): String = stringBinder.unbind(key, nino.nino)
+
+    override def bind(key: String, value: String): Either[String, Nino] = {
+      if (Nino.isValid(value)) {
+        Right(Nino(value))
+      } else {
+        Left("ERROR_NINO_INVALID")
       }
     }
   }

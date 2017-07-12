@@ -19,7 +19,7 @@ package controllers
 import javax.inject.Inject
 
 import common.StubResource
-import models.{InvalidScenarioException, JsonErrorResponse, MarriageAllowanceStatusCreationRequest, MarriageAllowanceStatusSummaryResponse, TaxYear}
+import models.{MarriageAllowanceStatusCreationRequest, MarriageAllowanceStatusSummaryResponse, TaxYear}
 import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Action

@@ -16,4 +16,4 @@
 
 package models
 
-final case class MarriageAllowanceEligibilitySummary(utr: String, taxYear: String, response: MarriageAllowanceEligibilitySummaryResponse)
+final case class MarriageAllowanceEligibilitySummary(nino: String, taxYearStart: String, firstname: String, surname: String, dateOfBirth: String, eligible: Boolean)
