@@ -16,4 +16,4 @@
 
 package models
 
-final case class MarriageAllowanceStatusSummary(utr: String, taxYear: String, response: MarriageAllowanceStatusSummaryResponse)
+final case class MarriageAllowanceStatusSummary(utr: String, taxYear: String, status: String, deceased: Boolean)

@@ -35,7 +35,7 @@ trait MarriageAllowanceStatusController extends BaseController with StubResource
 
   final def find(utr: SaUtr, taxYearStart: String) = Action async {
     service.fetch(utr.utr, taxYearStart) map {
-      case Some(result) => Ok(Json.toJson(result.response))
+      case Some(result) => Ok(Json.toJson(MarriageAllowanceStatusSummaryResponse(result.status, result.deceased)))
       case _ => NotFound
     } recover {
       case e =>
@@ -46,16 +46,12 @@ trait MarriageAllowanceStatusController extends BaseController with StubResource
 
   final def create(utr: SaUtr, taxYear: TaxYear) = Action.async(parse.json) { implicit request =>
     withJsonBody[MarriageAllowanceStatusCreationRequest] { createStatusRequest =>
-      val scenario = createStatusRequest.scenario.getOrElse("HAPPY_PATH_1")
-
       for {
-        scenario <- scenarioLoader.loadScenario[MarriageAllowanceStatusSummaryResponse]("marriage-allowance-status", scenario)
-        _ <- service.create(utr.utr, taxYear.startYr, scenario)
+        _ <- service.create(utr.utr, taxYear.startYr, createStatusRequest.status, createStatusRequest.deceased)
       } yield Created.as(JSON)
 
     } recover {
-      case _: InvalidScenarioException  =>  BadRequest(JsonErrorResponse("UNKNOWN_SCENARIO", "Unknown test scenario"))
-      case e                            =>
+      case e =>
         Logger.error("An error occurred while creating test data", e)
         InternalServerError
     }

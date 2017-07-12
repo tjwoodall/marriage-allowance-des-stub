@@ -18,5 +18,5 @@ package models
 
 sealed trait MarriageAllowanceRequest
 
-final case class MarriageAllowanceStatusCreationRequest(scenario: Option[String]) extends MarriageAllowanceRequest
+final case class MarriageAllowanceStatusCreationRequest(status: String, deceased: Boolean) extends MarriageAllowanceRequest
 final case class MarriageAllowanceEligibilityCreationRequest(scenario: Option[String]) extends MarriageAllowanceRequest
