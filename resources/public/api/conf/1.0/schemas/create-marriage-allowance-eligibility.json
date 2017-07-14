@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Create Marriage Allowance eligibility test data request",
+  "type": "object",
+  "properties": {
+    "firstname": {
+      "description": "Partner’s (potential recipient’s) first name",
+      "type": "string",
+      "example": "John"
+    },
+    "surname": {
+      "description": "Partner’s (potential recipient’s) surname",
+      "type": "string",
+      "example": "Smith"
+    },
+    "dateOfBirth": {
+      "description": "Partner’s (potential recipient’s) date of birth in YYYY-MM-DD format",
+      "type": "string",
+      "format": "date",
+      "example": "1980-01-31"
+    },
+    "eligible": {
+      "description": "Whether the taxpayer's partner is eligible to become a recipient of Marriage Allowance",
+      "type": "boolean"
+    }
+  },
+  "required": ["firstname", "surname", "dateOfBirth", "eligible"]
+}

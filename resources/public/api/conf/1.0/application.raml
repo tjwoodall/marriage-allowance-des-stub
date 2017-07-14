@@ -44,6 +44,7 @@ uses:
             body:
               application/json:
                 example: !include examples/create-marriage-allowance-status-request.json
+                type: !include schemas/create-marriage-allowance-status.json
             responses:
               201:
 
@@ -60,7 +61,8 @@ uses:
             securedBy: [ sec.x-application ]
             body:
               application/json:
-                example: !include examples/create-marriage-allowance-status-request.json
+                example: !include examples/create-marriage-allowance-eligibility-request.json
+                type: !include schemas/create-marriage-allowance-eligibility.json
             responses:
               201:
 

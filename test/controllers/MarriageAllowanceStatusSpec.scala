@@ -16,34 +16,43 @@
 
 package controllers
 
+import models.MarriageAllowanceStatusSummary
+import org.mockito.BDDMockito.given
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.http.Status
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import services.MarriageAllowanceStatusService
+import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import util.ResourceLoader
 
-class MarriageAllowanceStatusSpec extends UnitSpec with MockitoSugar with OneAppPerSuite with ResourceLoader {
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
+class MarriageAllowanceStatusSpec extends UnitSpec with MockitoSugar with OneAppPerSuite {
   trait Setup extends MicroserviceFilterSupport {
     val request = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json")
     implicit val headerCarrier = HeaderCarrier()
 
-    val underTest = new MarriageAllowanceStatus()
+    val underTest = new MarriageAllowanceStatusController {
+      override val service: MarriageAllowanceStatusService = mock[MarriageAllowanceStatusService]
+    }
+
+    val deceasedStatusSummary = MarriageAllowanceStatusSummary("utr", "2014", "status", true)
   }
 
   "fetch" should {
 
-    "return the happy path response when called with a utr and taxYear" in new Setup {
+    "return the response when called with a utr and taxYear" in new Setup {
 
-      val expected = loadResource("/resources/marriage-allowance-status/happy_path.json")
+      given(underTest.service.fetch("utr", "2014")).willReturn(Future(Some(deceasedStatusSummary)))
 
-      val result = await(underTest.fetch("11111", "2014-15")(request))
+      val result = await(underTest.find(SaUtr("utr"), "2014")(request))
 
       status(result) shouldBe Status.OK
-      jsonBodyOf(result) shouldBe Json.parse(expected)
+      (jsonBodyOf(result) \ "deceased").get.toString() shouldBe "true"
     }
   }
 }
