@@ -26,5 +26,5 @@ package object models {
   implicit val marriageAllowanceEligibilitySummaryResponseFormat = Json.format[MarriageAllowanceEligibilitySummaryResponse]
   implicit val marriageAllowanceEligibilitySummaryFormat = Json.format[MarriageAllowanceEligibilitySummary]
 
-  implicit val apiAccessFmt = Json.format[APIAccess]
+  implicit val apiAccessFormat = Json.format[APIAccess]
 }

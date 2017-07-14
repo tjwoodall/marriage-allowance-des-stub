@@ -23,14 +23,13 @@ import models._
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
-import services.{MarriageAllowanceEligibilityService, MarriageAllowanceEligibilityServiceImpl, ScenarioLoader, ScenarioLoaderImpl}
+import services.{MarriageAllowanceEligibilityService, MarriageAllowanceEligibilityServiceImpl}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.microservice.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait MarriageAllowanceEligibilityController extends BaseController with StubResource {
-  val scenarioLoader: ScenarioLoader
+trait MarriageAllowanceEligibilityController extends BaseController with StubResource with HeaderValidator {
   val service: MarriageAllowanceEligibilityService
 
   final def find(nino: Nino, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String) = Action async {
@@ -44,20 +43,19 @@ trait MarriageAllowanceEligibilityController extends BaseController with StubRes
     }
   }
 
-  final def create(nino: Nino, taxYear: TaxYear) = Action.async(parse.json) { implicit request =>
+  final def create(nino: Nino, taxYear: TaxYear) = ValidateAcceptHeader.async(parse.json) { implicit request =>
     withJsonBody[MarriageAllowanceEligibilityCreationRequest] { request =>
       for {
         _ <- service.create(nino.nino, taxYear.startYr, request.firstname, request.surname, request.dateOfBirth, request.eligible)
       } yield Created.as(JSON)
 
     } recover {
-      case e                            =>
+      case e  =>
         Logger.error("An error occurred while creating test data", e)
         InternalServerError
     }
   }
 }
 
-final class MarriageAllowanceEligibilityControllerImpl @Inject()(override val scenarioLoader: ScenarioLoaderImpl,
-                                                                 override val service: MarriageAllowanceEligibilityServiceImpl)
+final class MarriageAllowanceEligibilityControllerImpl @Inject()(override val service: MarriageAllowanceEligibilityServiceImpl)
   extends MarriageAllowanceEligibilityController

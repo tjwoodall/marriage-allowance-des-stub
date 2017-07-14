@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package util
+package controllers
 
-import scala.io.Source
+import models.ErrorResponse
+import play.api.libs.json.Json
+import play.api.mvc.{Request, Result, Results}
 
-trait ResourceLoader {
+trait ErrorConversion {
 
-  def loadResource(path: String): String = {
-    val resource = getClass.getResourceAsStream(path)
-    try Source.fromInputStream(resource).mkString
-    finally resource.close
-  }
+  import Results._
+
+  implicit def toResult[T](error: ErrorResponse)(implicit request: Request[T]): Result = Status(error.httpStatusCode)(Json.toJson(error))
 }
-
-object ResourceLoader extends ResourceLoader

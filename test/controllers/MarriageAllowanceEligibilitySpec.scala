@@ -16,43 +16,53 @@
 
 package controllers
 
+import models.MarriageAllowanceEligibilitySummary
+import org.mockito.BDDMockito.given
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.http.Status
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import services.MarriageAllowanceEligibilityService
+import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import util.ResourceLoader
 
-class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with OneAppPerSuite with ResourceLoader {
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
+class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with OneAppPerSuite {
   trait Setup extends MicroserviceFilterSupport {
     val request = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json")
     implicit val headerCarrier = HeaderCarrier()
 
-    val underTest = new MarriageAllowanceEligibility()
+    val underTest = new MarriageAllowanceEligibilityController {
+      override val service: MarriageAllowanceEligibilityService = mock[MarriageAllowanceEligibilityService]
+    }
+
+    val eligibleSummary = MarriageAllowanceEligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", true)
+    val ineligibleSummary = MarriageAllowanceEligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", false)
   }
 
   "fetch" should {
-    "return the eligible happy path response when called with a utr, AA000003D, firstname, surname, dateOfBirth and taxYear" in new Setup {
+    "return the eligible response when called with a utr, AA000003D, firstname, surname, dateOfBirth and taxYear" in new Setup {
 
-      val expected = loadResource("/resources/marriage-allowance-eligibility/happy_path_eligible.json")
+      given(underTest.service.fetch("AA000003D", "firstname", "surname", "1981-01-31", "2014")).willReturn(Future(Some(eligibleSummary)))
 
-      val result = await(underTest.fetch("1111111111", "AA000003D", "John", "Smith", "1981-01-31", "2014-15")(request))
+      val result = await(underTest.find(Nino("AA000003D"), "firstname", "surname", "1981-01-31", "2014")(request))
 
       status(result) shouldBe Status.OK
-      jsonBodyOf(result) shouldBe Json.parse(expected)
+      (jsonBodyOf(result) \ "eligible").get.toString() shouldBe "true"
     }
 
-    "return the ineligible happy path response when called with a utr, AA000004C, firstname, surname, dateOfBirth and taxYear" in new Setup {
+    "return the ineligible response when called with a utr, AA000004C, firstname, surname, dateOfBirth and taxYear" in new Setup {
 
-      val expected = loadResource("/resources/marriage-allowance-eligibility/happy_path_ineligible.json")
+      given(underTest.service.fetch("AA000003D", "firstname", "surname", "1981-01-31", "2014")).willReturn(Future(Some(ineligibleSummary)))
 
-      val result = await(underTest.fetch("2222222222", "AA000004C", "John", "Smith", "1981-01-31", "2014-15")(request))
+      val result = await(underTest.find(Nino("AA000003D"), "firstname", "surname", "1981-01-31", "2014")(request))
 
       status(result) shouldBe Status.OK
-      jsonBodyOf(result) shouldBe Json.parse(expected)
+      (jsonBodyOf(result) \ "eligible").get.toString() shouldBe "false"
     }
   }
 }

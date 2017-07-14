@@ -18,9 +18,10 @@ lazy val playUiVersion = "7.2.1"
 lazy val logbackJsonLoggerVersion = "3.1.0"
 lazy val domainVersion = "4.1.0"
 lazy val playReactiveMongoVersion = "5.2.0"
+lazy val scalaJVersion = "1.1.6"
 
 lazy val appName = "marriage-allowance-des-stub"
-lazy val appVersion = envOrElse("PAYE_DES_STUB_VERSION", "999-SNAPSHOT")
+lazy val appVersion = envOrElse("MARRIAGE_ALLOWANCE_DES_STUB_VERSION", "999-SNAPSHOT")
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test
 
@@ -35,7 +36,7 @@ lazy val compile = Seq(
   "uk.gov.hmrc" %% "play-reactivemongo" % playReactiveMongoVersion
 )
 
-lazy val scope: String = "test"
+lazy val scope: String = "test, it"
 
 lazy val test = Seq(
     "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % scope,
@@ -43,6 +44,7 @@ lazy val test = Seq(
     "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % scope,
     "org.mockito" % "mockito-core" % "1.10.19" % scope,
     "org.pegdown" % "pegdown" % "1.6.0" % scope,
+    "org.scalaj" %% "scalaj-http" % scalaJVersion % scope,
     "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
   )
 
@@ -72,7 +74,9 @@ lazy val microservice = (project in file("."))
     unmanagedSourceDirectories in IntegrationTest <<= (baseDirectory in IntegrationTest) (base => Seq(base / "it")),
     addTestReportOption(IntegrationTest, "int-test-reports"),
     testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    parallelExecution in IntegrationTest := false)
+    parallelExecution in IntegrationTest := false,
+    libraryDependencies ++= test
+  )
   .settings(resolvers ++= Seq(
     Resolver.bintrayRepo("hmrc", "releases"),
     Resolver.jcenterRepo
