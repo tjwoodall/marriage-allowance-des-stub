@@ -3,15 +3,28 @@
   "description": "Create Marriage Allowance status test data request",
   "type": "object",
   "properties": {
-    "scenario": {
-      "description": "The scenario to create test data for",
+    "status": {
+      "description": "The role of the taxpayer as recipient or transferor",
       "type": "string",
       "oneOf": [
         {
-          "enum": ["HAPPY_PATH_1"],
-          "description" : "Standard happy path test scenario (default)"
+          "enum": ["Transferor"],
+          "description" : "The taxpayer has transferred personal allowance in the given tax year"
+        },
+        {
+          "enum": ["Recipient"],
+          "description" : "The taxpayer has received personal allowance in the given tax year"
+        },
+        {
+          "enum": ["None"],
+          "description" : "The taxpayer has not transferred or received personal allowance in the given tax year"
         }
       ]
+    },
+    "deceased": {
+      "description": "Whether the taxpayer is deceased or not",
+      "type": "boolean"
     }
-  }
+  },
+  "required": ["status", "deceased"]
 }
