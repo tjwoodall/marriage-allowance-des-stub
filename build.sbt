@@ -19,6 +19,15 @@ lazy val logbackJsonLoggerVersion = "3.1.0"
 lazy val domainVersion = "4.1.0"
 lazy val playReactiveMongoVersion = "5.2.0"
 lazy val scalaJVersion = "1.1.6"
+lazy val playHmrcApiVersion = "1.4.0"
+lazy val playAuthVersion = "4.3.0"
+lazy val hmrcTestVersion = "2.3.0"
+lazy val hmrcReactiveMongoTestVersion = "2.0.0"
+lazy val scalaTestVersion = "2.2.6"
+lazy val scalaTestPlusPlayVersion = "1.5.1"
+lazy val mockitoVersion = "2.8.9"
+lazy val pegdownVersion = "1.6.0"
+lazy val wiremockVersion = "1.58"
 
 lazy val appName = "marriage-allowance-des-stub"
 lazy val appVersion = envOrElse("MARRIAGE_ALLOWANCE_DES_STUB_VERSION", "999-SNAPSHOT")
@@ -33,19 +42,23 @@ lazy val compile = Seq(
   "uk.gov.hmrc" %% "play-ui" % playUiVersion,
   "uk.gov.hmrc" %% "logback-json-logger" % logbackJsonLoggerVersion,
   "uk.gov.hmrc" %% "domain" % domainVersion,
-  "uk.gov.hmrc" %% "play-reactivemongo" % playReactiveMongoVersion
+  "uk.gov.hmrc" %% "play-reactivemongo" % playReactiveMongoVersion,
+  "uk.gov.hmrc" %% "play-hmrc-api" % playHmrcApiVersion,
+  "uk.gov.hmrc" %% "play-authorisation" % playAuthVersion
 )
 
 lazy val scope: String = "test, it"
 
 lazy val test = Seq(
-    "uk.gov.hmrc" %% "hmrctest" % "2.3.0" % scope,
-    "org.scalatest" %% "scalatest" % "2.2.6" % scope,
-    "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % scope,
-    "org.mockito" % "mockito-core" % "1.10.19" % scope,
-    "org.pegdown" % "pegdown" % "1.6.0" % scope,
-    "org.scalaj" %% "scalaj-http" % scalaJVersion % scope,
-    "com.typesafe.play" %% "play-test" % PlayVersion.current % scope
+  "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion % scope,
+  "uk.gov.hmrc" %% "reactivemongo-test" % hmrcReactiveMongoTestVersion % scope,
+  "org.scalatest" %% "scalatest" % scalaTestVersion % scope,
+  "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusPlayVersion % scope,
+  "org.mockito" % "mockito-core" % mockitoVersion % scope,
+  "org.pegdown" % "pegdown" % pegdownVersion % scope,
+  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
+  "org.scalaj" %% "scalaj-http" % scalaJVersion % scope,
+  "com.github.tomakehurst" % "wiremock" % wiremockVersion % scope
   )
 
 lazy val plugins: Seq[Plugins] = Seq.empty
