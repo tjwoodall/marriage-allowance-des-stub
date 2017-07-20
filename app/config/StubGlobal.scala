@@ -47,7 +47,7 @@ object AuthParamsControllerConfiguration extends AuthParamsControllerConfig {
 }
 
 object MicroserviceAuditConnector extends AuditConnector with RunMode {
-  override lazy val auditingConfig = LoadAuditingConfig("auditing")
+  override lazy val auditingConfig = LoadAuditingConfig(s"$env.auditing")
 }
 
 object MicroserviceAuditFilter extends AuditFilter with AppName with MicroserviceFilterSupport {
