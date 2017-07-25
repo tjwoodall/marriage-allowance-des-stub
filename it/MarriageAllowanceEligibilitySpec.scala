@@ -15,8 +15,16 @@
  */
 import play.api.http.Status.{CREATED, NOT_FOUND, OK}
 import play.api.libs.json.Json
+import stubs.ApiPlatformTestUserStub
+import uk.gov.hmrc.domain.Nino
 
 class MarriageAllowanceEligibilitySpec extends IntegrationTest {
+
+  override def beforeEach() = {
+    super.beforeEach()
+    ApiPlatformTestUserStub.willReturnTheIndividual(Nino("AC000003D"))
+  }
+
   feature("Fetch marriage allowance eligibility") {
     scenario("Marriage allowance eligibility data is not returned for the given utr and taxYear as it hasn't been primed") {
       When("I fetch marriage allowance eligibility data for a given utr and taxYear")
@@ -30,7 +38,7 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
   feature("Prime marriage allowance eligibility") {
     scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario") {
       When("I prime marriage allowance eligibility data for a given utr and taxYear")
-      val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", """{"firstname":"Firstname","surname":"Surname", "dateOfBirth":"1980-01-01", "eligible":true}""")
+      val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", """{"eligible":true}""")
 
       Then("the response should indicate that marriage allowance eligibility data has been created")
       primeResponse.code shouldBe CREATED

@@ -16,7 +16,9 @@
 
 package models
 
-sealed trait MarriageAllowanceRequest
+import org.joda.time.LocalDate
+import uk.gov.hmrc.domain.Nino
 
-final case class MarriageAllowanceStatusCreationRequest(status: String, deceased: Boolean) extends MarriageAllowanceRequest
-final case class MarriageAllowanceEligibilityCreationRequest(eligible: Boolean) extends MarriageAllowanceRequest
+case class IndividualDetails(firstName: String, lastName: String, dateOfBirth: LocalDate)
+
+case class TestIndividual(nino: Nino, individualDetails: IndividualDetails)

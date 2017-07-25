@@ -16,23 +16,34 @@
 
 package services
 
-import models.{MarriageAllowanceEligibilitySummary, MarriageAllowanceEligibilitySummaryResponse}
+import connectors.ApiPlatformTestUserConnector
+import models.MarriageAllowanceEligibilitySummary
 import repositories.MarriageAllowanceEligibilityRepository
+import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
 trait MarriageAllowanceEligibilityService {
   val repository: MarriageAllowanceEligibilityRepository
+  val testUserConnector: ApiPlatformTestUserConnector
 
-  def create(nino: String, taxYearStart: String, firstname: String, surname: String, dateOfBirth: String, eligible: Boolean): Future[MarriageAllowanceEligibilitySummary] = {
-    repository.store(MarriageAllowanceEligibilitySummary(nino, taxYearStart, firstname, surname, dateOfBirth, eligible))
+  def create(nino: Nino, taxYearStart: String, eligible: Boolean)(implicit hc: HeaderCarrier): Future[MarriageAllowanceEligibilitySummary] = {
+    for {
+      individualDetails <- testUserConnector.fetchByNino(nino).map(_.individualDetails)
+      eligibilitySummary = MarriageAllowanceEligibilitySummary(nino.nino, taxYearStart, individualDetails.firstName,
+        individualDetails.lastName, individualDetails.dateOfBirth.toString, eligible)
+      _ <- repository.store(eligibilitySummary)
+    } yield eligibilitySummary
   }
 
-  def fetch(nino: String, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String): Future[Option[MarriageAllowanceEligibilitySummary]] = {
-    repository.fetch(nino, taxYearStart)
+  def fetch(nino: Nino, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String): Future[Option[MarriageAllowanceEligibilitySummary]] = {
+    repository.fetch(nino.nino, taxYearStart)
   }
 }
 
 class MarriageAllowanceEligibilityServiceImpl extends MarriageAllowanceEligibilityService {
   override val repository = MarriageAllowanceEligibilityRepository()
+  override val testUserConnector = ApiPlatformTestUserConnector
 }

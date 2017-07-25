@@ -14,9 +14,22 @@
  * limitations under the License.
  */
 
-package models
+package connectors
 
-sealed trait MarriageAllowanceRequest
+import config.WSHttp
+import models.TestIndividual
+import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.play.config.ServicesConfig
+import uk.gov.hmrc.play.http.HeaderCarrier
 
-final case class MarriageAllowanceStatusCreationRequest(status: String, deceased: Boolean) extends MarriageAllowanceRequest
-final case class MarriageAllowanceEligibilityCreationRequest(eligible: Boolean) extends MarriageAllowanceRequest
+import scala.concurrent.Future
+
+trait ApiPlatformTestUserConnector extends ServicesConfig {
+  lazy val serviceUrl = baseUrl("api-platform-test-user")
+
+  def fetchByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
+    WSHttp.GET[TestIndividual](s"$serviceUrl/individuals/nino/$nino")
+  }
+}
+
+object ApiPlatformTestUserConnector extends ApiPlatformTestUserConnector

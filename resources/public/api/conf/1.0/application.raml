@@ -48,6 +48,13 @@ uses:
             responses:
               201:
 
+  /nino:
+    /{nino}:
+      uriParameters:
+        nino:
+          description: Partner’s (potential recipient’s) National Insurance number. This must match the National Insurance number of an individual created using the [Create Test User API](https://test-developer.service.hmrc.gov.uk/api-documentation/docs/api/service/api-platform-test-user).
+          type: string
+          example: "AA000003D"
       /eligibility:
         /{taxYear}:
           uriParameters:
@@ -65,4 +72,13 @@ uses:
                 type: !include schemas/create-marriage-allowance-eligibility.json
             responses:
               201:
+              400:
+                body:
+                  application/json:
+                    type: types.errorResponse
+                    examples:
+                      invalidNino:
+                        description: Invalid National Insurance number
+                        value:
+                          code: INVALID_NINO
 
