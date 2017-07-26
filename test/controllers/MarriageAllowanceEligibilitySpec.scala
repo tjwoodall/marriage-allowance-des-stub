@@ -16,24 +16,29 @@
 
 package controllers
 
-import models.MarriageAllowanceEligibilitySummary
+import models.{MarriageAllowanceEligibilitySummary, TaxYear}
+import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito.given
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.http.Status
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import services.MarriageAllowanceEligibilityService
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
 import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.play.http.NotFoundException
+
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with OneAppPerSuite {
   trait Setup extends MicroserviceFilterSupport {
-    val request = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json")
+    val fetchRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json")
+    val createRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json").withBody[JsValue](Json.parse("""{"eligible":true}"""))
     implicit val headerCarrier = HeaderCarrier()
 
     val underTest = new MarriageAllowanceEligibilityController {
@@ -47,9 +52,9 @@ class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with O
   "fetch" should {
     "return the eligible response when called with a utr, AA000003D, firstname, surname, dateOfBirth and taxYear" in new Setup {
 
-      given(underTest.service.fetch("AA000003D", "firstname", "surname", "1981-01-31", "2014")).willReturn(Future(Some(eligibleSummary)))
+      given(underTest.service.fetch(Nino("AA000003D"), "firstname", "surname", "1981-01-31", "2014")).willReturn(Future(Some(eligibleSummary)))
 
-      val result = await(underTest.find(Nino("AA000003D"), "firstname", "surname", "1981-01-31", "2014")(request))
+      val result = await(underTest.find(Nino("AA000003D"), "firstname", "surname", "1981-01-31", "2014")(fetchRequest))
 
       status(result) shouldBe Status.OK
       (jsonBodyOf(result) \ "eligible").get.toString() shouldBe "true"
@@ -57,12 +62,33 @@ class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with O
 
     "return the ineligible response when called with a utr, AA000004C, firstname, surname, dateOfBirth and taxYear" in new Setup {
 
-      given(underTest.service.fetch("AA000003D", "firstname", "surname", "1981-01-31", "2014")).willReturn(Future(Some(ineligibleSummary)))
+      given(underTest.service.fetch(Nino("AA000003D"), "firstname", "surname", "1981-01-31", "2014")).willReturn(Future(Some(ineligibleSummary)))
 
-      val result = await(underTest.find(Nino("AA000003D"), "firstname", "surname", "1981-01-31", "2014")(request))
+      val result = await(underTest.find(Nino("AA000003D"), "firstname", "surname", "1981-01-31", "2014")(fetchRequest))
 
       status(result) shouldBe Status.OK
       (jsonBodyOf(result) \ "eligible").get.toString() shouldBe "false"
+    }
+  }
+
+  "create" should {
+    "return a CREATED response when successful" in new Setup {
+
+      given(underTest.service.create(refEq(Nino("AA000003D")), refEq("2017"), refEq(true))(any())).willReturn(Future.successful(eligibleSummary))
+
+      val result = await(underTest.create(Nino("AA000003D"), TaxYear("2017-18"))(createRequest))
+
+      status(result) shouldBe Status.CREATED
+    }
+
+    "return a NOT_FOUND response when an unknown NINO is specified" in new Setup {
+
+      given(underTest.service.create(refEq(Nino("AA000003D")), refEq("2017"), refEq(true))(any())).willReturn(Future.failed(new NotFoundException("Expected test error")))
+
+      val result = await(underTest.create(Nino("AA000003D"), TaxYear("2017-18"))(createRequest))
+
+      status(result) shouldBe Status.NOT_FOUND
+      jsonBodyOf(result) shouldBe Json.parse("""{"code": "INVALID_NINO", "message": "Invalid National Insurance number"}""")
     }
   }
 }

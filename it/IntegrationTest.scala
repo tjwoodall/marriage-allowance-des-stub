@@ -21,6 +21,7 @@ import org.scalatestplus.play.OneServerPerSuite
 import play.api.Application
 import play.api.http.HeaderNames
 import play.api.inject.guice.GuiceApplicationBuilder
+import stubs.ApiPlatformTestUserStub
 
 import scala.concurrent.duration.Duration
 import scalaj.http.Http
@@ -37,6 +38,21 @@ trait IntegrationTest extends FeatureSpec with BeforeAndAfterAll with BeforeAndA
 
   val timeout = Duration(5, TimeUnit.SECONDS)
   val serviceUrl = s"http://localhost:$port"
+
+  override def beforeAll() = {
+    super.beforeAll()
+    ApiPlatformTestUserStub.server.start()
+  }
+
+  override def beforeEach() = {
+    super.beforeEach()
+    ApiPlatformTestUserStub.server.resetMappings()
+  }
+
+  override def afterAll() = {
+    super.afterAll()
+    ApiPlatformTestUserStub.server.stop()
+  }
 
   def getEndpoint(endpoint: String) =
     Http(s"$serviceUrl/$endpoint")

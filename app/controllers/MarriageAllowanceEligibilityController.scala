@@ -25,6 +25,7 @@ import play.api.libs.json._
 import play.api.mvc._
 import services.{MarriageAllowanceEligibilityService, MarriageAllowanceEligibilityServiceImpl}
 import uk.gov.hmrc.domain.Nino
+import uk.gov.hmrc.play.http.NotFoundException
 import uk.gov.hmrc.play.microservice.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -33,7 +34,7 @@ trait MarriageAllowanceEligibilityController extends BaseController with StubRes
   val service: MarriageAllowanceEligibilityService
 
   final def find(nino: Nino, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String) = Action async {
-    service.fetch(nino.nino, firstname, surname, dateOfBirth, taxYearStart) map {
+    service.fetch(nino, firstname, surname, dateOfBirth, taxYearStart) map {
       case Some(result) => Ok(Json.toJson(MarriageAllowanceEligibilitySummaryResponse(result.eligible)))
       case _ => NotFound
     } recover {
@@ -44,12 +45,14 @@ trait MarriageAllowanceEligibilityController extends BaseController with StubRes
   }
 
   final def create(nino: Nino, taxYear: TaxYear) = ValidateAcceptHeader.async(parse.json) { implicit request =>
-    withJsonBody[MarriageAllowanceEligibilityCreationRequest] { request =>
+    withJsonBody[MarriageAllowanceEligibilityCreationRequest] { creationRequest =>
       for {
-        _ <- service.create(nino.nino, taxYear.startYr, request.firstname, request.surname, request.dateOfBirth, request.eligible)
+        _ <- service.create(nino, taxYear.startYr, creationRequest.eligible)
       } yield Created.as(JSON)
 
     } recover {
+      case e: NotFoundException =>
+        NotFound(JsonErrorResponse("INVALID_NINO", "Invalid National Insurance number"))
       case e  =>
         Logger.error("An error occurred while creating test data", e)
         InternalServerError
