@@ -24,6 +24,7 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import services.{MarriageAllowanceEligibilityService, MarriageAllowanceEligibilityServiceImpl}
+import uk.gov.hmrc.api.controllers.HeaderValidator
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.http.NotFoundException
 import uk.gov.hmrc.play.microservice.controller.BaseController
@@ -44,7 +45,7 @@ trait MarriageAllowanceEligibilityController extends BaseController with StubRes
     }
   }
 
-  final def create(nino: Nino, taxYear: TaxYear) = ValidateAcceptHeader.async(parse.json) { implicit request =>
+  final def create(nino: Nino, taxYear: TaxYear) = validateAccept(acceptHeaderValidationRules).async(parse.json) { implicit request =>
     withJsonBody[MarriageAllowanceEligibilityCreationRequest] { creationRequest =>
       for {
         _ <- service.create(nino, taxYear.startYr, creationRequest.eligible)
