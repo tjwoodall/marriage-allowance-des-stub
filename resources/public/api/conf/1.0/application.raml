@@ -34,11 +34,14 @@ uses:
         /{taxYear}:
           uriParameters:
             taxYear:
-              description: The tax year for the marriage allowance test data being created.
+              description: The tax year for which the Marriage Allowance status is being created.
               type: types.taxYear
           post:
             displayName: Create Marriage Allowance status test data
-            description: Supports the [Get Marriage Allowance status resource method](https://test-developer.service.hmrc.gov.uk/api-documentation/docs/api/service/marriage-allowance/1.0#_get-marriage-allowance-status_get_accordion) on the Marriage Allowance API.
+            description: |
+                Lets you create Marriage Allowance status test data.
+
+                Supports the [Get Marriage Allowance status resource method](https://test-developer.service.hmrc.gov.uk/api-documentation/docs/api/service/marriage-allowance#_get-marriage-allowance-status_get_accordion) on the Marriage Allowance API.
             is: [headers.acceptHeader]
             securedBy: [ sec.x-application ]
             body:
@@ -59,11 +62,14 @@ uses:
         /{taxYear}:
           uriParameters:
             taxYear:
-              description: The tax year for the marriage allowance test data being created.
+              description: The tax year for which the Marriage Allowance eligibility is being created.
               type: types.taxYear
           post:
             displayName: Create Marriage Allowance eligibility test data
-            description: Supports the [Get Marriage Allowance status resource method](https://test-developer.service.hmrc.gov.uk/api-documentation/docs/api/service/marriage-allowance/1.0#_get-marriage-allowance-status_get_accordion) on the Marriage Allowance API.
+            description: |
+                Lets you create Marriage Allowance eligibility test data.
+
+                Supports the [Check Marriage Allowance eligibility resource method](https://test-developer.service.hmrc.gov.uk/api-documentation/docs/api/service/marriage-allowance#_check-marriage-allowance-eligibility_get_accordion) on the Marriage Allowance API.
             is: [headers.acceptHeader]
             securedBy: [ sec.x-application ]
             body:

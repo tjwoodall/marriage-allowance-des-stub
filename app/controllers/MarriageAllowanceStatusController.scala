@@ -24,12 +24,13 @@ import play.api.Logger
 import play.api.libs.json.Json
 import play.api.mvc.Action
 import services.{MarriageAllowanceStatusService, MarriageAllowanceStatusServiceImpl}
+import uk.gov.hmrc.api.controllers.HeaderValidator
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.microservice.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait MarriageAllowanceStatusController extends BaseController with StubResource {
+trait MarriageAllowanceStatusController extends BaseController with StubResource with HeaderValidator {
   val service: MarriageAllowanceStatusService
 
   final def find(utr: SaUtr, taxYearStart: String) = Action async {
@@ -43,7 +44,7 @@ trait MarriageAllowanceStatusController extends BaseController with StubResource
     }
   }
 
-  final def create(utr: SaUtr, taxYear: TaxYear) = Action.async(parse.json) { implicit request =>
+  final def create(utr: SaUtr, taxYear: TaxYear) = validateAccept(acceptHeaderValidationRules).async(parse.json) { implicit request =>
     withJsonBody[MarriageAllowanceStatusCreationRequest] { createStatusRequest =>
       for {
         _ <- service.create(utr.utr, taxYear.startYr, createStatusRequest.status, createStatusRequest.deceased)
