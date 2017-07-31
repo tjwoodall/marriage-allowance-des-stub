@@ -16,11 +16,12 @@
 
 package controllers
 
-import models.MarriageAllowanceStatusSummary
+import models.{MarriageAllowanceStatusSummary, TaxYear}
 import org.mockito.BDDMockito.given
 import org.scalatest.mock.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
-import play.api.http.Status
+import play.api.http.Status._
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import services.MarriageAllowanceStatusService
 import uk.gov.hmrc.domain.SaUtr
@@ -33,14 +34,24 @@ import scala.concurrent.Future
 
 class MarriageAllowanceStatusSpec extends UnitSpec with MockitoSugar with OneAppPerSuite {
   trait Setup extends MicroserviceFilterSupport {
-    val request = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json")
+    val jsonBody = Json.parse(
+      """
+        |{
+        |  "status": "Recipient",
+        |  "deceased": true
+        |}
+      """.stripMargin)
+
+    val fetchRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json")
+    val createRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json").withBody(jsonBody)
+
     implicit val headerCarrier = HeaderCarrier()
 
     val underTest = new MarriageAllowanceStatusController {
       override val service: MarriageAllowanceStatusService = mock[MarriageAllowanceStatusService]
     }
 
-    val deceasedStatusSummary = MarriageAllowanceStatusSummary("utr", "2014", "status", true)
+    val deceasedStatusSummary = MarriageAllowanceStatusSummary("utr", "2014", "Recipient", true)
   }
 
   "fetch" should {
@@ -49,10 +60,23 @@ class MarriageAllowanceStatusSpec extends UnitSpec with MockitoSugar with OneApp
 
       given(underTest.service.fetch("utr", "2014")).willReturn(Future(Some(deceasedStatusSummary)))
 
-      val result = await(underTest.find(SaUtr("utr"), "2014")(request))
+      val result = await(underTest.find(SaUtr("utr"), "2014")(fetchRequest))
 
-      status(result) shouldBe Status.OK
-      (jsonBodyOf(result) \ "deceased").get.toString() shouldBe "true"
+      status(result) shouldBe OK
+      jsonBodyOf(result) shouldBe jsonBody
+    }
+  }
+
+  "create" should {
+
+    "return a CREATED response with payload matching the request" in new Setup {
+
+      given(underTest.service.create("utr", "2014", "Recipient", true)).willReturn(Future(deceasedStatusSummary))
+
+      val result = await(underTest.create(SaUtr("utr"), TaxYear("2014-15"))(createRequest))
+
+      status(result) shouldBe CREATED
+      jsonBodyOf(result) shouldBe jsonBody
     }
   }
 }

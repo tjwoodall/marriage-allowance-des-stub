@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "description": "Create Marriage Allowance eligibility test data request",
+  "description": "Create Marriage Allowance eligibility test data payload",
   "type": "object",
   "properties": {
     "eligible": {

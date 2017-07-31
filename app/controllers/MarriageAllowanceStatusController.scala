@@ -47,8 +47,8 @@ trait MarriageAllowanceStatusController extends BaseController with StubResource
   final def create(utr: SaUtr, taxYear: TaxYear) = validateAccept(acceptHeaderValidationRules).async(parse.json) { implicit request =>
     withJsonBody[MarriageAllowanceStatusCreationRequest] { createStatusRequest =>
       for {
-        _ <- service.create(utr.utr, taxYear.startYr, createStatusRequest.status, createStatusRequest.deceased)
-      } yield Created.as(JSON)
+        result <- service.create(utr.utr, taxYear.startYr, createStatusRequest.status, createStatusRequest.deceased)
+      } yield Created(Json.toJson(MarriageAllowanceStatusSummaryResponse(result.status, result.deceased)))
 
     } recover {
       case e =>

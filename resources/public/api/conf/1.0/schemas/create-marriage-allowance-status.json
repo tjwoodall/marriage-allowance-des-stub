@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-04/schema#",
-  "description": "Create Marriage Allowance status test data request",
+  "description": "Create Marriage Allowance status test data payload",
   "type": "object",
   "properties": {
     "status": {

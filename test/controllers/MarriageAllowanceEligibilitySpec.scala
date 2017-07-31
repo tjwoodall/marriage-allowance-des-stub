@@ -79,16 +79,21 @@ class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with O
       val result = await(underTest.create(Nino("AA000003D"), TaxYear("2017-18"))(createRequest))
 
       status(result) shouldBe Status.CREATED
+      (jsonBodyOf(result) \ "eligible").get.toString() shouldBe "true"
     }
 
-    "return a NOT_FOUND response when an unknown NINO is specified" in new Setup {
+    "return a TEST_USER_NOT_FOUND response when an unknown NINO is specified" in new Setup {
 
       given(underTest.service.create(refEq(Nino("AA000003D")), refEq("2017"), refEq(true))(any())).willReturn(Future.failed(new NotFoundException("Expected test error")))
 
       val result = await(underTest.create(Nino("AA000003D"), TaxYear("2017-18"))(createRequest))
 
       status(result) shouldBe Status.NOT_FOUND
-      jsonBodyOf(result) shouldBe Json.parse("""{"code": "INVALID_NINO", "message": "Invalid National Insurance number"}""")
+      jsonBodyOf(result) shouldBe Json.parse(
+        """{
+          |  "code": "TEST_USER_NOT_FOUND",
+          |  "message": "No test individual exists with the specified National Insurance number"
+          |}""".stripMargin)
     }
   }
 }

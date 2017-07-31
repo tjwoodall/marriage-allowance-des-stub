@@ -46,10 +46,15 @@ uses:
             securedBy: [ sec.x-application ]
             body:
               application/json:
-                example: !include examples/create-marriage-allowance-status-request.json
+                example: !include examples/create-marriage-allowance-status.json
                 type: !include schemas/create-marriage-allowance-status.json
             responses:
               201:
+                body:
+                  application/json:
+                    example: !include examples/create-marriage-allowance-status.json
+                    type: !include schemas/create-marriage-allowance-status.json
+
 
   /nino:
     /{nino}:
@@ -74,17 +79,21 @@ uses:
             securedBy: [ sec.x-application ]
             body:
               application/json:
-                example: !include examples/create-marriage-allowance-eligibility-request.json
+                example: !include examples/create-marriage-allowance-eligibility.json
                 type: !include schemas/create-marriage-allowance-eligibility.json
             responses:
               201:
+                body:
+                  application/json:
+                    example: !include examples/create-marriage-allowance-eligibility.json
+                    type: !include schemas/create-marriage-allowance-eligibility.json
               400:
                 body:
                   application/json:
                     type: types.errorResponse
                     examples:
                       invalidNino:
-                        description: Invalid National Insurance number
+                        description: No test individual exists with the specified National Insurance number
                         value:
-                          code: NINO_INVALID
+                          code: TEST_USER_NOT_FOUND
 
