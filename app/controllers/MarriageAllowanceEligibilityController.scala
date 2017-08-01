@@ -48,12 +48,12 @@ trait MarriageAllowanceEligibilityController extends BaseController with StubRes
   final def create(nino: Nino, taxYear: TaxYear) = validateAccept(acceptHeaderValidationRules).async(parse.json) { implicit request =>
     withJsonBody[MarriageAllowanceEligibilityCreationRequest] { creationRequest =>
       for {
-        _ <- service.create(nino, taxYear.startYr, creationRequest.eligible)
-      } yield Created.as(JSON)
+        result <- service.create(nino, taxYear.startYr, creationRequest.eligible)
+      } yield Created(Json.toJson(MarriageAllowanceEligibilitySummaryResponse(result.eligible)))
 
     } recover {
       case e: NotFoundException =>
-        NotFound(JsonErrorResponse("INVALID_NINO", "Invalid National Insurance number"))
+        NotFound(JsonErrorResponse("TEST_USER_NOT_FOUND", "No test individual exists with the specified National Insurance number"))
       case e  =>
         Logger.error("An error occurred while creating test data", e)
         InternalServerError
