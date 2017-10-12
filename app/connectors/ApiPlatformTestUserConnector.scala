@@ -20,9 +20,10 @@ import config.WSHttp
 import models.TestIndividual
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.config.ServicesConfig
-import uk.gov.hmrc.play.http.HeaderCarrier
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import scala.concurrent.Future
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait ApiPlatformTestUserConnector extends ServicesConfig {
   lazy val serviceUrl = baseUrl("api-platform-test-user")
