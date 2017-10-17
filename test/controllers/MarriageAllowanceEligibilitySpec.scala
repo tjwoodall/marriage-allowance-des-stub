@@ -26,14 +26,13 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import services.MarriageAllowanceEligibilityService
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.filters.MicroserviceFilterSupport
-import uk.gov.hmrc.play.http.HeaderCarrier
 import uk.gov.hmrc.play.test.UnitSpec
-import uk.gov.hmrc.play.http.NotFoundException
 
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import uk.gov.hmrc.http.{ HeaderCarrier, NotFoundException }
+import uk.gov.hmrc.play.microservice.filters.MicroserviceFilterSupport
 
 class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with OneAppPerSuite {
   trait Setup extends MicroserviceFilterSupport {

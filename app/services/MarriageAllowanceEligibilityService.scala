@@ -20,10 +20,10 @@ import connectors.ApiPlatformTestUserConnector
 import models.MarriageAllowanceEligibilitySummary
 import repositories.MarriageAllowanceEligibilityRepository
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.HeaderCarrier
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.http.HeaderCarrier
 
 trait MarriageAllowanceEligibilityService {
   val repository: MarriageAllowanceEligibilityRepository

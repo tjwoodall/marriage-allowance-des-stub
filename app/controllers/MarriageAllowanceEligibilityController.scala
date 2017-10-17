@@ -26,10 +26,10 @@ import play.api.mvc._
 import services.{MarriageAllowanceEligibilityService, MarriageAllowanceEligibilityServiceImpl}
 import uk.gov.hmrc.api.controllers.HeaderValidator
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.http.NotFoundException
 import uk.gov.hmrc.play.microservice.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import uk.gov.hmrc.http.NotFoundException
 
 trait MarriageAllowanceEligibilityController extends BaseController with StubResource with HeaderValidator {
   val service: MarriageAllowanceEligibilityService
