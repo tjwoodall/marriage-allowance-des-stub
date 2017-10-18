@@ -42,7 +42,7 @@ uses:
                 Lets you create Marriage Allowance status test data.
 
                 Supports the [Get Marriage Allowance status resource method](https://test-developer.service.hmrc.gov.uk/api-documentation/docs/api/service/marriage-allowance#_get-marriage-allowance-status_get_accordion) on the Marriage Allowance API.
-            is: [headers.acceptHeader]
+            is: [headers.acceptHeader, headers.contentHeader]
             securedBy: [ sec.x-application ]
             body:
               application/json:
@@ -75,7 +75,7 @@ uses:
                 Lets you create Marriage Allowance eligibility test data.
 
                 Supports the [Check Marriage Allowance eligibility resource method](https://test-developer.service.hmrc.gov.uk/api-documentation/docs/api/service/marriage-allowance#_check-marriage-allowance-eligibility_get_accordion) on the Marriage Allowance API.
-            is: [headers.acceptHeader]
+            is: [headers.acceptHeader, headers.contentHeader]
             securedBy: [ sec.x-application ]
             body:
               application/json:
@@ -96,4 +96,3 @@ uses:
                         description: No test individual exists with the specified National Insurance number
                         value:
                           code: TEST_USER_NOT_FOUND
-
