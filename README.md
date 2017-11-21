@@ -9,7 +9,7 @@ This code is open source software licensed under the [Apache 2.0 License]("http:
 ## Overview
 
 The Marriage Allowance DES Stub is a service to support stateless sandbox testing in the
-External Test environment.
+Developer Sandbox (External Test) environment.
 
 It exposes:
 * a test support API on the API Platform that allows third party software developers
@@ -19,6 +19,8 @@ to prime test data in order to test different scenarios
 
 The test support endpoints exposed to the API Platform are documented in the
 [RAML definition](https://github.com/hmrc/marriage-allowance-des-stub/blob/master/resources/public/api/conf/1.0/application.raml)
+
+Internal users within HMRC can search Confluence for "Testing APIS with external parties" for further information.
 
 ## What uses this service?
 API microservices that need to call DES to fetch marriage allowance data which are
