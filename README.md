@@ -1,6 +1,6 @@
 #  Marriage Allowance DES Stub
 
-[![Build Status](https://travis-ci.org/hmrc/marriage-allowance-des-stub.svg)](https://travis-ci.org/hmrc/marriage-allowance-des-stub) [ ![Download](https://api.bintray.com/packages/hmrc/releases/marriage-allowance-des-stub/images/download.svg) ](https://bintray.com/hmrc/releases/marriage-allowance-des-stub/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/hmrc/releases/marriage-allowance-des-stub/images/download.svg) ](https://bintray.com/hmrc/releases/marriage-allowance-des-stub/_latestVersion)
 
 ### License
 
@@ -26,7 +26,7 @@ deployed to the External Test environment should be configured to connect
 to this stub instead of a real DES.
 
 API microservices which this stubs behaviour for are currently:
-* [Marriage Allowance](https://github.tools.tax.service.gov.uk/HMRC/marriage-allowance)
+* Marriage Allowance
 
 
 ## Running the tests
