@@ -35,7 +35,7 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
     }
   }
 
-  /*
+ /*
 
   feature("Prime marriage allowance eligibility")
   {
