@@ -13,7 +13,6 @@ import _root_.play.sbt.routes.RoutesKeys.routesGenerator
 import uk.gov.hmrc.SbtArtifactory
 
 lazy val appName = "marriage-allowance-des-stub"
-
 lazy val appDependencies: Seq[ModuleID] = compile ++ test
 
 lazy val compile = Seq(
@@ -39,6 +38,7 @@ lazy val test = Seq(
   )
 
 lazy val plugins : Seq[Plugins] = Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+
 lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
 lazy val microservice = (project in file("."))
