@@ -55,9 +55,9 @@ class PlatformIntegrationSpec extends UnitSpec with MockitoSugar with ScalaFutur
     .configure(Map(
       "appName" -> "application-name",
       "appUrl" -> "http://microservice-name.protected.mdtp",
-      "Test.microservice.services.service-locator.host" -> stubHost,
-      "Test.microservice.services.service-locator.port" -> stubPort,
-      "Test.microservice.services.service-locator.enabled" -> true
+      "microservice.services.service-locator.host" -> stubHost,
+      "microservice.services.service-locator.port" -> stubPort,
+      "microservice.services.service-locator.enabled" -> true
     )).in(Mode.Test).build()
 
   override def beforeEach() {
