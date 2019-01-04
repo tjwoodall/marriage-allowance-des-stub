@@ -21,7 +21,7 @@ lazy val compile = Seq(
   ws,
   "uk.gov.hmrc" %% "microservice-bootstrap" % "6.18.0",
   "uk.gov.hmrc" %% "domain" % "5.2.0",
-  "uk.gov.hmrc" %% "play-reactivemongo" % "6.2.0",-
+  "uk.gov.hmrc" %% "play-reactivemongo" % "6.2.0",
   "uk.gov.hmrc" %% "play-hmrc-api" % "2.0.0"
 )
 
@@ -47,6 +47,7 @@ lazy val microservice = (project in file("."))
   .settings(playSettings: _*)
   .settings(scalaSettings: _*)
   .settings(publishingSettings: _*)
+  .settings(majorVersion := 0)
   .settings(defaultSettings(): _*)
   .settings(routesImport += "controllers.Binders._")
   .settings(unmanagedResourceDirectories in Compile += baseDirectory.value / "resources")
