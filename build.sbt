@@ -10,9 +10,9 @@ import uk.gov.hmrc.SbtAutoBuildPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.versioning.SbtGitVersioning
 import _root_.play.sbt.routes.RoutesKeys.routesGenerator
+import uk.gov.hmrc.SbtArtifactory
 
 lazy val appName = "marriage-allowance-des-stub"
-lazy val appVersion = envOrElse("MARRIAGE_ALLOWANCE_DES_STUB_VERSION", "999-SNAPSHOT")
 
 lazy val appDependencies: Seq[ModuleID] = compile ++ test
 
@@ -38,13 +38,14 @@ lazy val test = Seq(
   "com.github.tomakehurst" % "wiremock" % "2.8.0" % scope
   )
 
-lazy val plugins: Seq[Plugins] = Seq.empty
+lazy val plugins : Seq[Plugins] = Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
 lazy val playSettings: Seq[Setting[_]] = Seq.empty
 
 lazy val microservice = (project in file("."))
   .enablePlugins(Seq(_root_.play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) ++ plugins: _*)
   .settings(playSettings: _*)
   .settings(scalaSettings: _*)
+  .settings(majorVersion := 0)
   .settings(publishingSettings: _*)
   .settings(defaultSettings(): _*)
   .settings(routesImport += "controllers.Binders._")
