@@ -35,7 +35,7 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
     }
   }
 
- /*
+
 
   feature("Prime marriage allowance eligibility")
   {
@@ -59,7 +59,7 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
     }
   }
 
-  */
+
 
 
   private def primeMarriageAllowanceEligibility(nino: String, taxYear: String, payload: String) =

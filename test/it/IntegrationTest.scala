@@ -33,6 +33,7 @@ trait IntegrationTest extends FeatureSpec with BeforeAndAfterAll with BeforeAndA
       "auditing.enabled" -> false,
       "auditing.traceRequests" -> false,
       "mongodb.uri" -> "mongodb://localhost:27017/marriage-allowance-des-stub",
+      "microservice.services.api-platform-test-user.port" -> 11112,
       "run.mode" -> "It"
     ).build()
 
