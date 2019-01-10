@@ -35,8 +35,12 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
     }
   }
 
-  feature("Prime marriage allowance eligibility") {
-    scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario") {
+
+
+  feature("Prime marriage allowance eligibility")
+  {
+    scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario")
+    {
       When("I prime marriage allowance eligibility data for a given utr and taxYear")
       val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", """{"eligible":true}""")
 
@@ -54,6 +58,9 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
       (Json.parse(fetchResponse.body) \ "eligible").get.toString() shouldBe "true"
     }
   }
+
+
+
 
   private def primeMarriageAllowanceEligibility(nino: String, taxYear: String, payload: String) =
     postEndpoint(s"nino/$nino/eligibility/$taxYear", payload)

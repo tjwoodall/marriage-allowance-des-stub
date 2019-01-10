@@ -47,7 +47,7 @@ import uk.gov.hmrc.play.test.UnitSpec
 class PlatformIntegrationSpec extends UnitSpec with MockitoSugar with ScalaFutures with BeforeAndAfterEach with GuiceOneAppPerTest {
 
   val stubHost = "localhost"
-  val stubPort = sys.env.getOrElse("WIREMOCK_SERVICE_LOCATOR_PORT", "11111").toInt
+  val stubPort = 11111
   val wireMockServer = new WireMockServer(wireMockConfig().port(stubPort))
 
   override def newAppForTest(testData: TestData): Application = GuiceApplicationBuilder()
@@ -55,9 +55,9 @@ class PlatformIntegrationSpec extends UnitSpec with MockitoSugar with ScalaFutur
     .configure(Map(
       "appName" -> "application-name",
       "appUrl" -> "http://microservice-name.protected.mdtp",
-      "Test.microservice.services.service-locator.host" -> stubHost,
-      "Test.microservice.services.service-locator.port" -> stubPort,
-      "Test.microservice.services.service-locator.enabled" -> true
+      "microservice.services.service-locator.host" -> stubHost,
+      "microservice.services.service-locator.port" -> stubPort,
+      "microservice.services.service-locator.enabled" -> true
     )).in(Mode.Test).build()
 
   override def beforeEach() {

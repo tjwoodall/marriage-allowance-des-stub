@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 HM Revenue & Customs
+ * Copyright 2019 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ object AuthParamsControllerConfiguration extends AuthParamsControllerConfig {
 }
 
 object MicroserviceAuditConnector extends AuditConnector with RunMode {
-  override lazy val auditingConfig = LoadAuditingConfig(s"$env.auditing")
+  override lazy val auditingConfig = LoadAuditingConfig("auditing")
 }
 
 object MicroserviceAuditFilter extends AuditFilter with AppName with MicroserviceFilterSupport {
@@ -73,7 +73,7 @@ object StubGlobal extends DefaultMicroserviceGlobal with ServiceLocatorRegistrat
   override implicit val hc: HeaderCarrier = HeaderCarrier()
   override val slConnector: ServiceLocatorConnector = ServiceLocatorConnector(WSHttp)
 
-  override lazy val registrationEnabled = current.configuration.getBoolean(s"$env.microservice.services.service-locator.enabled").getOrElse(true)
+  override lazy val registrationEnabled = current.configuration.getBoolean("microservice.services.service-locator.enabled").getOrElse(true)
 
   override def microserviceMetricsConfig(implicit app: Application) = app.configuration.getConfig("microservice.metrics")
 
