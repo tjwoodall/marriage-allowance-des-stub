@@ -18,14 +18,18 @@ package connectors
 
 import config.WSHttp
 import models.TestIndividual
+import play.api.{Configuration, Play}
+import play.api.Mode.Mode
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.play.config.ServicesConfig
 import scala.concurrent.ExecutionContext.Implicits.global
-
 import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
 
 trait ApiPlatformTestUserConnector extends ServicesConfig {
+  override protected def mode: Mode = Play.current.mode
+  override protected def runModeConfiguration: Configuration = Play.current.configuration
+
   lazy val serviceUrl = baseUrl("api-platform-test-user")
 
   def fetchByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {

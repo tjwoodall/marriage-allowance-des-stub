@@ -13,37 +13,37 @@ import _root_.play.sbt.routes.RoutesKeys.routesGenerator
 import uk.gov.hmrc.SbtArtifactory
 
 lazy val appName = "marriage-allowance-des-stub"
-lazy val appDependencies: Seq[ModuleID] = compile ++ test
+lazy val appDependencies: Seq[ModuleID] = compile ++ test ++ itTest
 
-lazy val compile = Seq(
+val hmrcTestVersion = "3.5.0-play-25"
+val scalaTestPlusPlayVersion = "2.0.1"
+
+lazy val compile: Seq[ModuleID] = Seq(
   ws,
-  "uk.gov.hmrc" %% "microservice-bootstrap" % "6.18.0",
+  "uk.gov.hmrc" %% "microservice-bootstrap" % "10.4.0",
   "uk.gov.hmrc" %% "domain" % "5.3.0",
-  "uk.gov.hmrc" %% "play-reactivemongo" % "6.2.0",
-  "uk.gov.hmrc" %% "play-hmrc-api" % "2.0.0"
+  "uk.gov.hmrc" %% "play-reactivemongo" % "6.4.0",
+  "uk.gov.hmrc" %% "play-hmrc-api" % "3.4.0-play-25"
 )
 
-lazy val scope: String = "test, it"
+lazy val test: Seq[ModuleID] = Seq(
+  "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion,
+  "uk.gov.hmrc" %% "reactivemongo-test" % "3.1.0",
+  "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusPlayVersion,
+  "org.mockito" % "mockito-core" % "2.24.5"
+).map(_ % "test")
 
-lazy val test = Seq(
-  "uk.gov.hmrc" %% "hmrctest" % "3.0.0" % scope,
-  "uk.gov.hmrc" %% "reactivemongo-test" % "3.1.0" % scope,
-  "org.scalatest" %% "scalatest" % "3.0.1" % scope,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "2.0.0" % scope,
-  "org.mockito" % "mockito-core" % "2.10.0" % scope,
-  "org.pegdown" % "pegdown" % "1.6.0" % scope,
-  "com.typesafe.play" %% "play-test" % PlayVersion.current % scope,
-  "org.scalaj" %% "scalaj-http" % "2.3.0" % scope,
-  "com.github.tomakehurst" % "wiremock" % "2.8.0" % scope
-  )
+val itTest: Seq[ModuleID] = Seq(
+  "uk.gov.hmrc" %% "hmrctest" % hmrcTestVersion,
+  "org.scalatestplus.play" %% "scalatestplus-play" % scalaTestPlusPlayVersion,
+  "org.scalaj" %% "scalaj-http" % "2.4.1",
+  "com.github.tomakehurst" % "wiremock" % "2.21.0"
+).map(_ % "it")
 
 lazy val plugins : Seq[Plugins] = Seq(play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
 
-lazy val playSettings: Seq[Setting[_]] = Seq.empty
-
 lazy val microservice = (project in file("."))
   .enablePlugins(Seq(_root_.play.sbt.PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin) ++ plugins: _*)
-  .settings(playSettings: _*)
   .settings(scalaSettings: _*)
   .settings(majorVersion := 0)
   .settings(publishingSettings: _*)
@@ -52,36 +52,19 @@ lazy val microservice = (project in file("."))
   .settings(unmanagedResourceDirectories in Compile += baseDirectory.value / "resources")
   .settings(
     name := appName,
-    scalaVersion := "2.11.11",
     libraryDependencies ++= appDependencies,
     retrieveManaged := true,
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     routesGenerator := StaticRoutesGenerator
   )
   .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(Defaults.itSettings): _*)
   .settings(
-    Keys.fork in Test := false,
-    unmanagedSourceDirectories in Test <<= (baseDirectory in Test) (base => Seq(base / "test" / "unit")),
-    addTestReportOption(Test, "test-reports")
-  )
-  .settings(
-    Keys.fork in IntegrationTest := false,
-    unmanagedSourceDirectories in IntegrationTest <<= (baseDirectory in IntegrationTest) (base => Seq(base / "test" / "it")),
-    addTestReportOption(IntegrationTest, "int-test-reports"),
-    testGrouping in IntegrationTest := oneForkedJvmPerTest((definedTests in IntegrationTest).value),
-    parallelExecution in IntegrationTest := false,
-    libraryDependencies ++= test
+    integrationTestSettings(): _*
   )
   .settings(resolvers ++= Seq(
     Resolver.bintrayRepo("hmrc", "releases"),
     Resolver.jcenterRepo
   ))
-
-def oneForkedJvmPerTest(tests: Seq[TestDefinition]) =
-  tests map {
-    test => Group(test.name, Seq(test), SubProcess(ForkOptions(runJVMOptions = Seq("-Dtest.name=" + test.name))))
-  }
 
 // Coverage configuration
 coverageMinimum := 75

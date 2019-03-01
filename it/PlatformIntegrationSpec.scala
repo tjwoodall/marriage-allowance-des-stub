@@ -21,7 +21,6 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import config.AppContext
 import controllers.DocumentationController
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.mockito.MockitoSugar
 import org.scalatest.{BeforeAndAfterEach, TestData}
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.http.LazyHttpErrorHandler
@@ -44,7 +43,7 @@ import uk.gov.hmrc.play.test.UnitSpec
   * 2b, The endpoints need to be defined in an application.raml file for all versions  For all of the endpoints defined documentation will be provided and be available under api/documentation/[version]/[endpoint name] GET endpoint
   * Example: api/documentation/1.0/Fetch-Some-Data
   */
-class PlatformIntegrationSpec extends UnitSpec with MockitoSugar with ScalaFutures with BeforeAndAfterEach with GuiceOneAppPerTest {
+class PlatformIntegrationSpec extends UnitSpec with ScalaFutures with BeforeAndAfterEach with GuiceOneAppPerTest {
 
   val stubHost = "localhost"
   val stubPort = 11111
