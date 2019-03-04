@@ -18,7 +18,7 @@ package controllers
 
 import models.{MarriageAllowanceStatusSummary, TaxYear}
 import org.mockito.BDDMockito.given
-import org.scalatest.mock.MockitoSugar
+import org.scalatest.mockito.MockitoSugar
 import org.scalatestplus.play.OneAppPerSuite
 import play.api.http.Status._
 import play.api.libs.json.Json

@@ -16,10 +16,10 @@
 
 package config
 
+import play.api.Configuration
 import play.api.Play._
-import uk.gov.hmrc.play.config.ServicesConfig
 
-class AppContext extends ServicesConfig {
-  val configuration = current.configuration
-  lazy val access = configuration.getConfig(s"api.access")
+class AppContext {
+  val configuration: Configuration = current.configuration
+  lazy val access: Option[Configuration] = configuration.getConfig("api.access")
 }
