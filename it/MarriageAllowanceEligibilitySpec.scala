@@ -13,58 +13,130 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import models.EligibilityRequest
 import play.api.http.Status.{CREATED, NOT_FOUND, OK}
-import play.api.libs.json.Json
+import play.api.libs.json.{JsSuccess, Json}
 import stubs.ApiPlatformTestUserStub
 import uk.gov.hmrc.domain.Nino
 
 class MarriageAllowanceEligibilitySpec extends IntegrationTest {
 
-  override def beforeEach() = {
+  override def beforeEach(): Unit = {
     super.beforeEach()
     ApiPlatformTestUserStub.willReturnTheIndividual(Nino("AC000003D"))
   }
 
-  feature("Fetch marriage allowance eligibility") {
+  private val eligibleTrue = """{"eligible":true}"""
+
+  //TODO remove with other deprecated dependents
+  feature("Fetch marriage allowance eligibility with get method") {
     scenario("Marriage allowance eligibility data is not returned for the given utr and taxYear as it hasn't been primed") {
       When("I fetch marriage allowance eligibility data for a given utr and taxYear")
-      val fetchResponse = fetchMarriageAllowanceEligibility("AB000003D", "Firstname", "Surname", "1980-01-01", "2014")
+      val fetchResponse = fetchMarriageAllowanceEligibilityGet("AB000003D", "Firstname", "Surname", "1980-01-01", "2014")
 
       Then("the response should not contain marriage allowance eligibility data")
       fetchResponse.code shouldBe NOT_FOUND
     }
   }
 
+  feature("Fetch marriage allowance eligibility with post method") {
+    scenario("Marriage allowance eligibility data is not returned for the given utr and taxYear as it hasn't been primed") {
+      When("I fetch marriage allowance eligibility data for a given utr and taxYear")
+      val fetchResponse = fetchMarriageAllowanceEligibilityPost("AB000003D", "Firstname", "Surname", "1980-01-01", "2014")
 
+      Then("the response should not contain marriage allowance eligibility data")
+      fetchResponse.code shouldBe NOT_FOUND
+    }
+  }
 
-  feature("Prime marriage allowance eligibility")
-  {
-    scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario")
-    {
+  //TODO remove with other deprecated dependents
+  feature("Prime marriage allowance eligibility with get") {
+    scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario") {
       When("I prime marriage allowance eligibility data for a given utr and taxYear")
-      val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", """{"eligible":true}""")
+      val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", eligibleTrue)
 
       Then("the response should indicate that marriage allowance eligibility data has been created")
       primeResponse.code shouldBe CREATED
 
-      And("I request marriage allowance eligibility data for a given utr and taxYear")
-      val fetchResponse = fetchMarriageAllowanceEligibility("AC000003D", "Firstname", "Surname", "1980-01-01", "2016")
+      And("I request marriage allowance eligibility data for a given utr and taxYear with get")
+      val fetchResponse = fetchMarriageAllowanceEligibilityGet("AC000003D", "Firstname", "Surname", "1980-01-01", "2016")
 
       And("The response should contain marriage allowance eligibility data")
       fetchResponse.code shouldBe OK
 
-      fetchResponse.body shouldBe """{"eligible":true}"""
+      fetchResponse.body shouldBe eligibleTrue
 
       (Json.parse(fetchResponse.body) \ "eligible").get.toString() shouldBe "true"
     }
   }
 
+  feature("Prime marriage allowance eligibility with post") {
+    scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario") {
+      When("I prime marriage allowance eligibility data for a given utr and taxYear")
+      val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", eligibleTrue)
 
+      Then("the response should indicate that marriage allowance eligibility data has been created")
+      primeResponse.code shouldBe CREATED
 
+      And("I request marriage allowance eligibility data for a given utr and taxYear with post")
+      val fetchResponse = fetchMarriageAllowanceEligibilityPost("AC000003D", "Firstname", "Surname", "1980-01-01", "2016")
+
+      And("The response should contain marriage allowance eligibility data")
+      fetchResponse.code shouldBe OK
+
+      fetchResponse.body shouldBe eligibleTrue
+
+      (Json.parse(fetchResponse.body) \ "eligible").get.toString() shouldBe "true"
+    }
+  }
+
+  feature("Prime marriage allowance eligibility with post (version agnostic)") {
+    scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario") {
+      When("I prime marriage allowance eligibility data for a given utr and taxYear")
+      val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", eligibleTrue)
+
+      Then("the response should indicate that marriage allowance eligibility data has been created")
+      primeResponse.code shouldBe CREATED
+
+      And("I request marriage allowance eligibility data for a given utr and taxYear with post v2")
+      val fetchResponse = fetchMarriageAllowanceEligibilityPost("AC000003D", "Firstname", "Surname", "1980-01-01", "2016", "2.0")
+
+      And("The response should contain marriage allowance eligibility data")
+      fetchResponse.code shouldBe OK
+
+      fetchResponse.body shouldBe eligibleTrue
+
+      (Json.parse(fetchResponse.body) \ "eligible").get.toString() shouldBe "true"
+    }
+  }
 
   private def primeMarriageAllowanceEligibility(nino: String, taxYear: String, payload: String) =
     postEndpoint(s"nino/$nino/eligibility/$taxYear", payload)
 
-  private def fetchMarriageAllowanceEligibility(nino: String, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String) =
+  @deprecated("This method will be removed. At about Feb 2020, not sure exact version of product")
+  private def fetchMarriageAllowanceEligibilityGet(nino: String, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String) =
     getEndpoint(s"marriage-allowance/citizen/$nino/eligibility?firstname=$firstname&surname=$surname&dateOfBirth=$dateOfBirth&taxYearStart=$taxYearStart")
+
+  private def fetchMarriageAllowanceEligibilityPost(nino: String, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String, version: String = "1.0") = {
+    val payload =
+      s"""
+         |{
+         |"nino": "$nino",
+         |"firstname": "$firstname",
+         |"surname": "$surname",
+         |"dateOfBirth": "$dateOfBirth",
+         |"taxYearStart": "$taxYearStart"
+         |}
+         |""".stripMargin
+
+    checkIfJsonIsValid(payload)
+
+    postEndpoint("marriage-allowance/citizen/eligibility", payload, version)
+  }
+
+  private def checkIfJsonIsValid(json: String) = {
+    Json.parse(json).validate[EligibilityRequest] shouldBe a[JsSuccess[_]]
+  }
+
 }
