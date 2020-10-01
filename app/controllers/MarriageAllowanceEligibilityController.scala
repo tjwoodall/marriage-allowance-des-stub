@@ -23,7 +23,6 @@ import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
 import services.{MarriageAllowanceEligibilityService, MarriageAllowanceEligibilityServiceImpl}
-import uk.gov.hmrc.api.controllers.{ErrorInternalServerError, ErrorNotFound, HeaderValidator}
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.microservice.controller.BaseController
@@ -31,18 +30,14 @@ import uk.gov.hmrc.play.microservice.controller.BaseController
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait MarriageAllowanceEligibilityController extends BaseController with StubResource with HeaderValidator {
+trait MarriageAllowanceEligibilityController extends BaseController with StubResource {
   val service: MarriageAllowanceEligibilityService
 
-  private val acceptHeaderValidationRulesWithoutVersion: Option[String] => Boolean =
-    _ flatMap (a => matchHeader(a) map (res => validateContentType(res.group("contenttype")))) getOrElse (false)
-
-
-  final def findEligibility = validateAccept(acceptHeaderValidationRulesWithoutVersion).async(parse.json) { implicit request =>
+  final def findEligibility: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[EligibilityRequest] { eligibilityRequest =>
       findEligibilityBasedOnRequest(eligibilityRequest) map {
         case Some(res) => Ok(Json.toJson(MarriageAllowanceEligibilitySummaryResponse(res.eligible)))
-        case _ => Status(ErrorNotFound.httpStatusCode)(Json.toJson(ErrorNotFound))
+        case _ => NotFound(Json.toJson(ErrorNotFound))
       } recover fromFailure
     }
   }
@@ -51,14 +46,14 @@ trait MarriageAllowanceEligibilityController extends BaseController with StubRes
     service.fetch(eligibilityRequest.nino, eligibilityRequest.taxYear)
   }
 
-  final def find(nino: Nino, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String) = Action async {
+  final def find(nino: Nino, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String): Action[AnyContent] = Action async {
     service.fetch(nino, taxYearStart) map {
       case Some(result) => Ok(Json.toJson(MarriageAllowanceEligibilitySummaryResponse(result.eligible)))
       case _ => NotFound
     } recover fromFailure
   }
 
-  final def create(nino: Nino, taxYear: TaxYear) = validateAccept(acceptHeaderValidationRules).async(parse.json) { implicit request =>
+  final def create(nino: Nino, taxYear: TaxYear): Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[MarriageAllowanceEligibilityCreationRequest] { creationRequest =>
       for {
         result <- service.create(nino, taxYear.startYr, creationRequest.eligible)
@@ -74,10 +69,10 @@ trait MarriageAllowanceEligibilityController extends BaseController with StubRes
   }
 
     private def fromFailure: PartialFunction[Throwable, Result] = {
-      case _: NotFoundException => Status(ErrorNotFound.httpStatusCode)(Json.toJson(ErrorNotFound))
+      case _: NotFoundException => NotFound(Json.toJson(ErrorNotFound))
       case e: Throwable =>
         Logger.error("An error occurred while finding test data", e)
-        Status(ErrorInternalServerError.httpStatusCode)(Json.toJson(ErrorInternalServerError))
+        InternalServerError(Json.toJson(ErrorInternalServerError))
   }
 }
 

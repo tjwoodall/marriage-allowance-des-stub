@@ -63,7 +63,6 @@ trait IntegrationTest extends FeatureSpec with BeforeAndAfterAll with BeforeAndA
     Http(s"$serviceUrl/$endpoint")
       .postData(payload)
       .header(HeaderNames.CONTENT_TYPE, "application/json")
-      .header(HeaderNames.ACCEPT, s"application/vnd.hmrc.$version+json")
       .asString
   }
 }
