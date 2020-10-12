@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package controllers
+package models
 
-import models.ErrorResponse
-import play.api.libs.json.Json
-import play.api.mvc.{Request, Result, Results}
+import play.api.libs.json.{JsValue, Json, Writes}
 
-trait ErrorConversion {
+sealed class ErrorResponse(val errorCode: String, val message: String)
 
-  import Results._
+case object ErrorNotFound extends ErrorResponse("NOT_FOUND", "Resource was not found")
+case object ErrorInternalServerError extends ErrorResponse("INTERNAL_SERVER_ERROR", "Internal server error")
 
-  implicit def toResult[T](error: ErrorResponse)(implicit request: Request[T]): Result = Status(error.httpStatusCode)(Json.toJson(error))
+
+object ErrorResponse {
+  implicit val errorResponseWrites: Writes[ErrorResponse] = new Writes[ErrorResponse] {
+    def writes(e: ErrorResponse): JsValue = Json.obj("code" -> e.errorCode, "message" -> e.message)
+  }
 }

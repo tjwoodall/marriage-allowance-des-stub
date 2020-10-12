@@ -16,24 +16,22 @@
 
 package controllers
 
-import javax.inject.Inject
-
 import common.StubResource
+import javax.inject.Inject
 import models.{MarriageAllowanceStatusCreationRequest, MarriageAllowanceStatusSummaryResponse, TaxYear}
 import play.api.Logger
-import play.api.libs.json.Json
-import play.api.mvc.Action
+import play.api.libs.json.{JsValue, Json}
+import play.api.mvc.{Action, AnyContent}
 import services.{MarriageAllowanceStatusService, MarriageAllowanceStatusServiceImpl}
-import uk.gov.hmrc.api.controllers.HeaderValidator
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.microservice.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait MarriageAllowanceStatusController extends BaseController with StubResource with HeaderValidator {
+trait MarriageAllowanceStatusController extends BaseController with StubResource {
   val service: MarriageAllowanceStatusService
 
-  final def find(utr: SaUtr, taxYearStart: String) = Action async {
+  final def find(utr: SaUtr, taxYearStart: String): Action[AnyContent] = Action.async {
     service.fetch(utr.utr, taxYearStart) map {
       case Some(result) => Ok(Json.toJson(MarriageAllowanceStatusSummaryResponse(result.status, result.deceased)))
       case _ => NotFound
@@ -44,7 +42,7 @@ trait MarriageAllowanceStatusController extends BaseController with StubResource
     }
   }
 
-  final def create(utr: SaUtr, taxYear: TaxYear) = validateAccept(acceptHeaderValidationRules).async(parse.json) { implicit request =>
+  final def create(utr: SaUtr, taxYear: TaxYear): Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[MarriageAllowanceStatusCreationRequest] { createStatusRequest =>
       for {
         result <- service.create(utr.utr, taxYear.startYr, createStatusRequest.status, createStatusRequest.deceased)
