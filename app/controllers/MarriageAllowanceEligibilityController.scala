@@ -16,7 +16,6 @@
 
 package controllers
 
-import common.StubResource
 import javax.inject.Inject
 import models._
 import play.api.Logger
@@ -28,29 +27,17 @@ import uk.gov.hmrc.http.NotFoundException
 import uk.gov.hmrc.play.microservice.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 
-trait MarriageAllowanceEligibilityController extends BaseController with StubResource {
+trait MarriageAllowanceEligibilityController extends BaseController {
   val service: MarriageAllowanceEligibilityService
 
   final def findEligibility: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[EligibilityRequest] { eligibilityRequest =>
-      findEligibilityBasedOnRequest(eligibilityRequest) map {
+      service.fetch(eligibilityRequest.nino, eligibilityRequest.taxYear) map {
         case Some(res) => Ok(Json.toJson(MarriageAllowanceEligibilitySummaryResponse(res.eligible)))
         case _ => NotFound(Json.toJson(ErrorNotFound))
       } recover fromFailure
     }
-  }
-
-  private final def findEligibilityBasedOnRequest(eligibilityRequest: EligibilityRequest): Future[Option[MarriageAllowanceEligibilitySummary]] = {
-    service.fetch(eligibilityRequest.nino, eligibilityRequest.taxYear)
-  }
-
-  final def find(nino: Nino, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String): Action[AnyContent] = Action async {
-    service.fetch(nino, taxYearStart) map {
-      case Some(result) => Ok(Json.toJson(MarriageAllowanceEligibilitySummaryResponse(result.eligible)))
-      case _ => NotFound
-    } recover fromFailure
   }
 
   final def create(nino: Nino, taxYear: TaxYear): Action[JsValue] = Action.async(parse.json) { implicit request =>

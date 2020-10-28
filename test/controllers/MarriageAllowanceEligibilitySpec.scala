@@ -49,28 +49,6 @@ class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with O
     val ineligibleSummary = MarriageAllowanceEligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", false)
   }
 
-  "fetch" should {
-    "return the eligible response when called with a utr, AA000003D, firstname, surname, dateOfBirth and taxYear" in new Setup {
-
-      given(underTest.service.fetch(Nino("AA000003D"), "2014")).willReturn(Future(Some(eligibleSummary)))
-
-      val result = await(underTest.find(Nino("AA000003D"), "firstname", "surname", "1981-01-31", "2014")(fetchRequest))
-
-      status(result) shouldBe Status.OK
-      (jsonBodyOf(result) \ "eligible").get.toString() shouldBe "true"
-    }
-
-    "return the ineligible response when called with a utr, AA000004C, firstname, surname, dateOfBirth and taxYear" in new Setup {
-
-      given(underTest.service.fetch(Nino("AA000003D"), "2014")).willReturn(Future(Some(ineligibleSummary)))
-
-      val result = await(underTest.find(Nino("AA000003D"), "firstname", "surname", "1981-01-31", "2014")(fetchRequest))
-
-      status(result) shouldBe Status.OK
-      (jsonBodyOf(result) \ "eligible").get.toString() shouldBe "false"
-    }
-  }
-
   "create" should {
     "return a CREATED response when successful" in new Setup {
 

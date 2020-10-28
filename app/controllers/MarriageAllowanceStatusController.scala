@@ -16,7 +16,6 @@
 
 package controllers
 
-import common.StubResource
 import javax.inject.Inject
 import models.{MarriageAllowanceStatusCreationRequest, MarriageAllowanceStatusSummaryResponse, TaxYear}
 import play.api.Logger
@@ -28,7 +27,7 @@ import uk.gov.hmrc.play.microservice.controller.BaseController
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait MarriageAllowanceStatusController extends BaseController with StubResource {
+trait MarriageAllowanceStatusController extends BaseController {
   val service: MarriageAllowanceStatusService
 
   final def find(utr: SaUtr, taxYearStart: String): Action[AnyContent] = Action.async {
