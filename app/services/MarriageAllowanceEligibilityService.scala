@@ -44,6 +44,6 @@ trait MarriageAllowanceEligibilityService {
 }
 
 class MarriageAllowanceEligibilityServiceImpl extends MarriageAllowanceEligibilityService {
-  override val repository = MarriageAllowanceEligibilityRepository()
-  override val testUserConnector = ApiPlatformTestUserConnector
+  override val repository: MarriageAllowanceEligibilityRepository = MarriageAllowanceEligibilityRepository()
+  override val testUserConnector: ApiPlatformTestUserConnector = ApiPlatformTestUserConnector
 }
