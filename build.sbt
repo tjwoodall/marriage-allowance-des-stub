@@ -1,11 +1,9 @@
-import _root_.play.sbt.routes.RoutesKeys.routesGenerator
-import play.routes.compiler.StaticRoutesGenerator
+import de.heikoseeberger.sbtheader.AutomateHeaderPlugin.autoImport.automateHeaderSettings
+import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport.headerSettings
 import uk.gov.hmrc.DefaultBuildSettings._
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
-import de.heikoseeberger.sbtheader.HeaderPlugin.autoImport.headerSettings
-import de.heikoseeberger.sbtheader.AutomateHeaderPlugin.autoImport.automateHeaderSettings
 
 lazy val appName = "marriage-allowance-des-stub"
 
@@ -26,7 +24,7 @@ lazy val microservice = (project in file("."))
     retrieveManaged := true,
     unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    routesGenerator := StaticRoutesGenerator,
+    //routesGenerator := StaticRoutesGenerator,
     resolvers ++= Seq(
         Resolver.bintrayRepo("hmrc", "releases"),
         Resolver.jcenterRepo

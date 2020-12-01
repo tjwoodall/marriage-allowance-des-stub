@@ -3,14 +3,14 @@ import play.sbt.PlayImport.ws
 
 object AppDependencies {
 
-  val hmrcTestVersion = "3.5.0-play-25" //TODO remove
+  val hmrcTestVersion = "3.9.0-play-25" //TODO remove
   val scalaTestPlusPlayVersion = "2.0.1"
 
   lazy val compile: Seq[ModuleID] = Seq(
     ws,
     "uk.gov.hmrc" %% "microservice-bootstrap" % "10.4.0",
-    "uk.gov.hmrc" %% "domain" % "5.3.0",
-    "uk.gov.hmrc" %% "play-reactivemongo" % "6.4.0"
+    "uk.gov.hmrc" %% "domain" % "5.10.0-play-25",
+    "uk.gov.hmrc" %% "play-reactivemongo" % "6.8.0"
   )
 
   lazy val test: Seq[ModuleID] = Seq(
