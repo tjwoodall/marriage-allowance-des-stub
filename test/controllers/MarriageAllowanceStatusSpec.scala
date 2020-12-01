@@ -19,23 +19,21 @@ package controllers
 import models.{StatusSummary, TaxYear}
 import org.mockito.BDDMockito.given
 import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.http.Status._
+import org.scalatestplus.play.{OneAppPerSuite, PlaySpec}
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import services.StatusService
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.microservice.filters.MicroserviceFilterSupport
 
-class MarriageAllowanceStatusSpec extends UnitSpec with MockitoSugar with OneAppPerSuite {
+class MarriageAllowanceStatusSpec extends PlaySpec with MockitoSugar with OneAppPerSuite {
 
   val mockStatusService: StatusService = mock[StatusService]
-  trait Setup extends MicroserviceFilterSupport {
+  trait Setup {
     val jsonBody = Json.parse(
       """
         |{
@@ -60,10 +58,10 @@ class MarriageAllowanceStatusSpec extends UnitSpec with MockitoSugar with OneApp
 
       given(mockStatusService.fetch("utr", "2014")).willReturn(Future(Some(deceasedStatusSummary)))
 
-      val result = await(underTest.find(SaUtr("utr"), "2014")(fetchRequest))
+      val result = underTest.find(SaUtr("utr"), "2014")(fetchRequest)
 
-      status(result) shouldBe OK
-      jsonBodyOf(result) shouldBe jsonBody
+      status(result) mustBe OK
+      contentAsJson(result) mustBe jsonBody
     }
   }
 
@@ -73,10 +71,10 @@ class MarriageAllowanceStatusSpec extends UnitSpec with MockitoSugar with OneApp
 
       given(mockStatusService.create("utr", "2014", "Recipient", true)).willReturn(Future(deceasedStatusSummary))
 
-      val result = await(underTest.create(SaUtr("utr"), TaxYear("2014-15"))(createRequest))
+      val result = underTest.create(SaUtr("utr"), TaxYear("2014-15"))(createRequest)
 
-      status(result) shouldBe CREATED
-      jsonBodyOf(result) shouldBe jsonBody
+      status(result) mustBe CREATED
+      contentAsJson(result) mustBe jsonBody
     }
   }
 }

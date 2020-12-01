@@ -21,7 +21,7 @@ import javax.inject.Inject
 import models.APIAccess
 import play.api.http.HttpErrorHandler
 import play.api.mvc.{Action, AnyContent}
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
 import views.txt
 
 class DocumentationController @Inject()(httpErrorHandler: HttpErrorHandler, appContext: ApplicationConfig) extends AssetsBuilder(httpErrorHandler) with BaseController {

@@ -24,7 +24,7 @@ import play.api.mvc._
 import services.EligibilityService
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BaseController
 
 import scala.concurrent.ExecutionContext
 
