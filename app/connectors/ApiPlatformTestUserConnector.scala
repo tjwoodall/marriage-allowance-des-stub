@@ -17,16 +17,17 @@
 package connectors
 
 import com.google.inject.Inject
-import config.{ApplicationConfig, WSHttp}
+import config.ApplicationConfig
 import models.TestIndividual
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ApiPlatformTestUserConnector @Inject()(
                                               appConfig: ApplicationConfig,
-                                              http: WSHttp
+                                              http: DefaultHttpClient
                                             )(implicit ec: ExecutionContext) {
 
   val serviceUrl: String = appConfig.apiTestUserUrl

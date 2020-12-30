@@ -21,6 +21,7 @@ import org.joda.time.format.DateTimeFormat
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 import uk.gov.hmrc.domain.Nino
+import play.api.libs.json.JodaWrites._
 
 import scala.util.Try
 

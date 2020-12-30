@@ -17,17 +17,14 @@
 package config
 
 import com.google.inject.Inject
-import play.api.{Configuration, Environment}
-import play.api.Mode.Mode
-import uk.gov.hmrc.play.config.ServicesConfig
+import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 
 class ApplicationConfig @Inject()(
                                    configuration: Configuration,
-                                   environment: Environment
-                                 ) extends ServicesConfig {
-  override protected def mode: Mode = environment.mode
-  override protected def runModeConfiguration: Configuration = configuration
+                                   runMode: RunMode
+                                 ) extends ServicesConfig(configuration, runMode) {
 
-  val access: Option[Configuration] = configuration.getConfig("api.access")
+  val access: Option[Configuration] = configuration.getOptional[Configuration]("api.access")
   val apiTestUserUrl: String = baseUrl("api-platform-test-user")
 }

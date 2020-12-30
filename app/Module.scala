@@ -15,13 +15,13 @@
  */
 
 import com.google.inject.AbstractModule
-import repositories.{EligibilityRepositoryProvider, MarriageAllowanceEligibilityRepository, MarriageAllowanceStatusRepository, StatusRepositoryProvider}
+//import repositories.{EligibilityRepositoryProvider, MarriageAllowanceEligibilityRepository, MarriageAllowanceStatusRepository, StatusRepositoryProvider}
 
 class Module extends AbstractModule {
   override def configure(): Unit = {
-    bind(classOf[MarriageAllowanceEligibilityRepository])
-      .toProvider(classOf[EligibilityRepositoryProvider])
-    bind(classOf[MarriageAllowanceStatusRepository])
-      .toProvider(classOf[StatusRepositoryProvider])
+//    bind(classOf[MarriageAllowanceEligibilityRepository])
+//      .toProvider(classOf[EligibilityRepositoryProvider])
+//    bind(classOf[MarriageAllowanceStatusRepository])
+//      .toProvider(classOf[StatusRepositoryProvider])
   }
 }

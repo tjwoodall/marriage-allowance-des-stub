@@ -5,6 +5,7 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
 
+
 lazy val appName = "marriage-allowance-des-stub"
 
 lazy val microservice = (project in file("."))
@@ -24,7 +25,6 @@ lazy val microservice = (project in file("."))
     retrieveManaged := true,
     unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
-    //routesGenerator := StaticRoutesGenerator,
     resolvers ++= Seq(
         Resolver.bintrayRepo("hmrc", "releases"),
         Resolver.jcenterRepo

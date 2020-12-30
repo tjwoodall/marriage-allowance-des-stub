@@ -16,38 +16,39 @@
 
 package repositories
 
-import com.google.inject.Provider
+import com.google.inject.{Inject, Provider}
 import models._
-import play.modules.reactivemongo.MongoDbConnection
+import play.modules.reactivemongo.{MongoDbConnection, ReactiveMongoComponent}
 import reactivemongo.api.DB
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.mongo.{ReactiveRepository, Repository}
+import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait MarriageAllowanceStatusRepository extends Repository[StatusSummary, BSONObjectID] {
-  def store[T <: StatusSummary](marriageAllowanceStatusSummary: T): Future[T]
-  def fetch(utr: String, taxYear: String): Future[Option[StatusSummary]]
-}
+//trait MarriageAllowanceStatusRepository extends ReactiveRepository[StatusSummary, BSONObjectID] {
+//  def store[T <: StatusSummary](marriageAllowanceStatusSummary: T): Future[T]
+//  def fetch(utr: String, taxYear: String): Future[Option[StatusSummary]]
+//}
+//
+//object MarriageAllowanceStatusRepository extends MongoDbConnection {
+//  private lazy val repository = new StatusRepository
+//  def apply(): MarriageAllowanceStatusRepository = repository
+//}
+//
+//class StatusRepositoryProvider extends Provider[MarriageAllowanceStatusRepository] {
+//  override def get(): MarriageAllowanceStatusRepository = MarriageAllowanceStatusRepository()
+//}
 
-object MarriageAllowanceStatusRepository extends MongoDbConnection {
-  private lazy val repository = new StatusRepository
-  def apply(): MarriageAllowanceStatusRepository = repository
-}
-
-class StatusRepositoryProvider extends Provider[MarriageAllowanceStatusRepository] {
-  override def get(): MarriageAllowanceStatusRepository = MarriageAllowanceStatusRepository()
-}
-
-class StatusRepository(implicit mongo: () => DB) extends ReactiveRepository[StatusSummary, BSONObjectID]("marriage-allowance-status", mongo,
-  marriageAllowanceStatusSummaryFormat, objectIdFormat) with MarriageAllowanceStatusRepository {
-  override def store[T <: StatusSummary](marriageAllowanceStatusSummary: T): Future[T] =
+class MarriageAllowanceStatusRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)
+  extends ReactiveRepository[StatusSummary, BSONObjectID]("marriage-allowance-status", reactiveMongoComponent.mongoConnector.db,
+  marriageAllowanceStatusSummaryFormat, objectIdFormat) {
+  def store[T <: StatusSummary](marriageAllowanceStatusSummary: T): Future[T] =
     for{
       _ <- remove("utr" -> marriageAllowanceStatusSummary.utr, "taxYear" -> marriageAllowanceStatusSummary.taxYear)
       _ <- insert(marriageAllowanceStatusSummary)
     } yield marriageAllowanceStatusSummary
 
-  override def fetch(utr: String, taxYear: String): Future[Option[StatusSummary]] =
+  def fetch(utr: String, taxYear: String): Future[Option[StatusSummary]] =
     find("utr" -> utr, "taxYear" -> taxYear) map(_.headOption)
 }

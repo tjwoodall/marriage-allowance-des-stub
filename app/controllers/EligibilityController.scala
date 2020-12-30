@@ -24,13 +24,14 @@ import play.api.mvc._
 import services.EligibilityService
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.{BackendController, BaseController}
 
 import scala.concurrent.ExecutionContext
 
 class EligibilityController @Inject()(
-                                       service: EligibilityService
-                                     )(implicit ec: ExecutionContext) extends BaseController {
+                                       service: EligibilityService,
+                                       cc: ControllerComponents
+                                     )(implicit ec: ExecutionContext) extends BackendController(cc) {
 
   final def findEligibility: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[EligibilityRequest] { eligibilityRequest =>

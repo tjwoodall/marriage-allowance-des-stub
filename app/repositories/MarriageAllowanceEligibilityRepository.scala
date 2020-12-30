@@ -16,37 +16,38 @@
 
 package repositories
 
-import com.google.inject.Provider
+import com.google.inject.{Inject, Provider}
 import models._
-import play.modules.reactivemongo.MongoDbConnection
+import play.modules.reactivemongo.{MongoDbConnection, ReactiveMongoComponent}
 import reactivemongo.api.DB
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.mongo.{ReactiveRepository, Repository}
+import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+//
+//trait MarriageAllowanceEligibilityRepository extends ReactiveRepository[EligibilitySummary, BSONObjectID] {
+//  def store[T <: EligibilitySummary](marriageAllowanceEligibilitySummary: T): Future[T]
+//  def fetch(nino: String, taxYearStart: String): Future[Option[EligibilitySummary]]
+//}
+//
+//class EligibilityRepositoryProvider extends Provider[MarriageAllowanceEligibilityRepository] {
+//  override def get(): MarriageAllowanceEligibilityRepository = MarriageAllowanceEligibilityRepository()
+//}
+//
+//object MarriageAllowanceEligibilityRepository extends MongoDbConnection {
+//  private lazy val repository = new EligibilityRepository
+//  def apply(): MarriageAllowanceEligibilityRepository = repository
+//}
 
-trait MarriageAllowanceEligibilityRepository extends Repository[EligibilitySummary, BSONObjectID] {
-  def store[T <: EligibilitySummary](marriageAllowanceEligibilitySummary: T): Future[T]
-  def fetch(nino: String, taxYearStart: String): Future[Option[EligibilitySummary]]
-}
-
-class EligibilityRepositoryProvider extends Provider[MarriageAllowanceEligibilityRepository] {
-  override def get(): MarriageAllowanceEligibilityRepository = MarriageAllowanceEligibilityRepository()
-}
-
-object MarriageAllowanceEligibilityRepository extends MongoDbConnection {
-  private lazy val repository = new EligibilityRepository
-  def apply(): MarriageAllowanceEligibilityRepository = repository
-}
-
-class EligibilityRepository(implicit mongo: () => DB) extends ReactiveRepository[EligibilitySummary, BSONObjectID]("marriage-allowance-eligibility", mongo,
-  marriageAllowanceEligibilitySummaryFormat, objectIdFormat) with MarriageAllowanceEligibilityRepository {
-  override def store[T <: EligibilitySummary](marriageAllowanceEligibilitySummary: T): Future[T] =
+class MarriageAllowanceEligibilityRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)
+  extends ReactiveRepository("marriage-allowance-eligibility", reactiveMongoComponent.mongoConnector.db,
+  marriageAllowanceEligibilitySummaryFormat, objectIdFormat) {
+  def store[T <: EligibilitySummary](marriageAllowanceEligibilitySummary: T): Future[T] =
     for{
       _ <- remove("nino" -> marriageAllowanceEligibilitySummary.nino, "taxYearStart" -> marriageAllowanceEligibilitySummary.taxYearStart)
       _ <- insert(marriageAllowanceEligibilitySummary)
     } yield marriageAllowanceEligibilitySummary
 
-  override def fetch(nino: String, taxYearStart: String): Future[Option[EligibilitySummary]] = find("nino" -> nino, "taxYearStart" -> taxYearStart) map(_.headOption)
+  def fetch(nino: String, taxYearStart: String): Future[Option[EligibilitySummary]] = find("nino" -> nino, "taxYearStart" -> taxYearStart) map(_.headOption)
 }

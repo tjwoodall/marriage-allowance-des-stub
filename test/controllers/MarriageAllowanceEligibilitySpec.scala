@@ -33,7 +33,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MarriageAllowanceEligibilitySpec extends PlaySpec with MockitoSugar with OneAppPerSuite {
+class MarriageAllowanceEligibilitySpec extends PlaySpec with MockitoSugar {
 
   val mockElgibilityService: EligibilityService = mock[EligibilityService]
 
@@ -42,7 +42,7 @@ class MarriageAllowanceEligibilitySpec extends PlaySpec with MockitoSugar with O
     val createRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json").withBody[JsValue](Json.parse("""{"eligible":true}"""))
     implicit val headerCarrier = HeaderCarrier()
 
-    val underTest = new EligibilityController(mockElgibilityService)
+    val underTest = new EligibilityController(mockElgibilityService, stubControllerComponents())
 
     val eligibleSummary = EligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", true)
     val ineligibleSummary = EligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", false)

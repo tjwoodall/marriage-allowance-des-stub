@@ -30,7 +30,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MarriageAllowanceStatusSpec extends PlaySpec with MockitoSugar with OneAppPerSuite {
+class MarriageAllowanceStatusSpec extends PlaySpec with MockitoSugar {
 
   val mockStatusService: StatusService = mock[StatusService]
   trait Setup {
@@ -47,7 +47,7 @@ class MarriageAllowanceStatusSpec extends PlaySpec with MockitoSugar with OneApp
 
     implicit val headerCarrier = HeaderCarrier()
 
-    val underTest = new StatusController(mockStatusService)
+    val underTest = new StatusController(mockStatusService, stubControllerComponents())
 
     val deceasedStatusSummary = StatusSummary("utr", "2014", "Recipient", true)
   }

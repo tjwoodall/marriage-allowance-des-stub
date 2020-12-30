@@ -20,16 +20,17 @@ import javax.inject.Inject
 import models.{MarriageAllowanceStatusCreationRequest, MarriageAllowanceStatusSummaryResponse, TaxYear}
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.StatusService
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.bootstrap.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.{BackendController, BaseController}
 
 import scala.concurrent.ExecutionContext
 
 class StatusController @Inject()(
-                                  service: StatusService
-                                )(implicit ec: ExecutionContext) extends BaseController {
+                                  service: StatusService,
+                                  cc: ControllerComponents
+                                )(implicit ec: ExecutionContext) extends BackendController(cc) {
 
   final def find(utr: SaUtr, taxYearStart: String): Action[AnyContent] = Action.async {
     service.fetch(utr.utr, taxYearStart) map {
