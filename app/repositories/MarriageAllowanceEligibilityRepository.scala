@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,29 +16,13 @@
 
 package repositories
 
-import com.google.inject.{Inject, Provider}
+import com.google.inject.Inject
 import models._
-import play.modules.reactivemongo.{MongoDbConnection, ReactiveMongoComponent}
-import reactivemongo.api.DB
-import reactivemongo.bson.BSONObjectID
+import play.modules.reactivemongo.ReactiveMongoComponent
 import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-//
-//trait MarriageAllowanceEligibilityRepository extends ReactiveRepository[EligibilitySummary, BSONObjectID] {
-//  def store[T <: EligibilitySummary](marriageAllowanceEligibilitySummary: T): Future[T]
-//  def fetch(nino: String, taxYearStart: String): Future[Option[EligibilitySummary]]
-//}
-//
-//class EligibilityRepositoryProvider extends Provider[MarriageAllowanceEligibilityRepository] {
-//  override def get(): MarriageAllowanceEligibilityRepository = MarriageAllowanceEligibilityRepository()
-//}
-//
-//object MarriageAllowanceEligibilityRepository extends MongoDbConnection {
-//  private lazy val repository = new EligibilityRepository
-//  def apply(): MarriageAllowanceEligibilityRepository = repository
-//}
 
 class MarriageAllowanceEligibilityRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)
   extends ReactiveRepository("marriage-allowance-eligibility", reactiveMongoComponent.mongoConnector.db,

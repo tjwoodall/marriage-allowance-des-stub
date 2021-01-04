@@ -16,6 +16,7 @@ lazy val microservice = (project in file("."))
     headerSettings(IntegrationTest),
     automateHeaderSettings(IntegrationTest),
     scalaSettings,
+    scalaVersion := "2.12.12",
     majorVersion := 0,
     publishingSettings,
     defaultSettings(),
