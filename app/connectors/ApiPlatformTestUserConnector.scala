@@ -33,7 +33,6 @@ class ApiPlatformTestUserConnector @Inject()(
   val serviceUrl: String = appConfig.apiTestUserUrl
 
   def fetchByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
-    println(s"$serviceUrl/individuals/nino/$nino")
     http.GET[TestIndividual](s"$serviceUrl/individuals/nino/$nino")
   }
 }

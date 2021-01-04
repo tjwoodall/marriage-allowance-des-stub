@@ -26,7 +26,7 @@ import play.api.libs.json.JodaWrites._
 import scala.util.Try
 
 case class Status(status: String, deceased: Boolean)
-//TODO move
+
 case class Eligibility(eligible: Boolean)
 
 object Eligibility {
