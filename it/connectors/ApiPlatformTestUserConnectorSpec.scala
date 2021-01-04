@@ -24,7 +24,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import stubs.ApiPlatformTestUserStub
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException, Upstream5xxResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException, UpstreamErrorResponse}
 import uk.gov.hmrc.play.test.UnitSpec
 
 class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach with BeforeAndAfterAll with GuiceOneAppPerSuite {
@@ -79,7 +79,7 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
     "fail when the remote service returns an error" in new Setup {
       ApiPlatformTestUserStub.willReturnAnError()
 
-      intercept[Upstream5xxResponse] {
+      intercept[UpstreamErrorResponse] {
         await(underTest.fetchByNino(nino))
       }
     }
