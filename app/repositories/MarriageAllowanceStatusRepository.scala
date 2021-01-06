@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,33 +16,24 @@
 
 package repositories
 
+import com.google.inject.Inject
 import models._
-import play.modules.reactivemongo.MongoDbConnection
-import reactivemongo.api.DB
+import play.modules.reactivemongo.ReactiveMongoComponent
 import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.mongo.{ReactiveRepository, Repository}
+import uk.gov.hmrc.mongo.ReactiveRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-trait MarriageAllowanceStatusRepository extends Repository[MarriageAllowanceStatusSummary, BSONObjectID] {
-  def store[T <: MarriageAllowanceStatusSummary](marriageAllowanceStatusSummary: T): Future[T]
-  def fetch(utr: String, taxYear: String): Future[Option[MarriageAllowanceStatusSummary]]
-}
-
-object MarriageAllowanceStatusRepository extends MongoDbConnection {
-  private lazy val repository = new MarriageAllowanceStatusMongoRepository
-  def apply(): MarriageAllowanceStatusRepository = repository
-}
-
-class MarriageAllowanceStatusMongoRepository(implicit mongo: () => DB) extends ReactiveRepository[MarriageAllowanceStatusSummary, BSONObjectID]("marriage-allowance-status", mongo,
-  marriageAllowanceStatusSummaryFormat, objectIdFormat) with MarriageAllowanceStatusRepository {
-  override def store[T <: MarriageAllowanceStatusSummary](marriageAllowanceStatusSummary: T): Future[T] =
+class MarriageAllowanceStatusRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)
+  extends ReactiveRepository[StatusSummary, BSONObjectID]("marriage-allowance-status", reactiveMongoComponent.mongoConnector.db,
+  marriageAllowanceStatusSummaryFormat, objectIdFormat) {
+  def store[T <: StatusSummary](marriageAllowanceStatusSummary: T): Future[T] =
     for{
       _ <- remove("utr" -> marriageAllowanceStatusSummary.utr, "taxYear" -> marriageAllowanceStatusSummary.taxYear)
       _ <- insert(marriageAllowanceStatusSummary)
     } yield marriageAllowanceStatusSummary
 
-  override def fetch(utr: String, taxYear: String): Future[Option[MarriageAllowanceStatusSummary]] =
+  def fetch(utr: String, taxYear: String): Future[Option[StatusSummary]] =
     find("utr" -> utr, "taxYear" -> taxYear) map(_.headOption)
 }

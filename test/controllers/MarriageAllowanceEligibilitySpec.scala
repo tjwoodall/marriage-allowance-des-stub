@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,58 +16,57 @@
 
 package controllers
 
-import models.{MarriageAllowanceEligibilitySummary, TaxYear}
+import models.{EligibilitySummary, TaxYear}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers._
 import org.mockito.BDDMockito.given
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.PlaySpec
 import play.api.http.Status
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
-import services.MarriageAllowanceEligibilityService
+import play.api.test.Helpers._
+import services.EligibilityService
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException}
-import uk.gov.hmrc.play.microservice.filters.MicroserviceFilterSupport
 
-class MarriageAllowanceEligibilitySpec extends UnitSpec with MockitoSugar with OneAppPerSuite {
+class MarriageAllowanceEligibilitySpec extends PlaySpec with MockitoSugar {
 
-  trait Setup extends MicroserviceFilterSupport {
+  val mockElgibilityService: EligibilityService = mock[EligibilityService]
+
+  trait Setup {
     val fetchRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json")
     val createRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json").withBody[JsValue](Json.parse("""{"eligible":true}"""))
     implicit val headerCarrier = HeaderCarrier()
 
-    val underTest = new MarriageAllowanceEligibilityController {
-      override val service: MarriageAllowanceEligibilityService = mock[MarriageAllowanceEligibilityService]
-    }
+    val underTest = new EligibilityController(mockElgibilityService, stubControllerComponents())
 
-    val eligibleSummary = MarriageAllowanceEligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", true)
-    val ineligibleSummary = MarriageAllowanceEligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", false)
+    val eligibleSummary = EligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", true)
+    val ineligibleSummary = EligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", false)
   }
 
   "create" should {
     "return a CREATED response when successful" in new Setup {
 
-      given(underTest.service.create(ArgumentMatchers.eq(Nino("AA000003D")), ArgumentMatchers.eq("2017"), ArgumentMatchers.eq(true))(any())).willReturn(Future.successful(eligibleSummary))
+      given(mockElgibilityService.create(ArgumentMatchers.eq(Nino("AA000003D")), ArgumentMatchers.eq("2017"), ArgumentMatchers.eq(true))(any())).willReturn(Future.successful(eligibleSummary))
 
-      val result = await(underTest.create(Nino("AA000003D"), TaxYear("2017-18"))(createRequest))
+      val result = underTest.create(Nino("AA000003D"), TaxYear("2017-18"))(createRequest)
 
-      status(result) shouldBe Status.CREATED
-      (jsonBodyOf(result) \ "eligible").get.toString() shouldBe "true"
+      status(result) mustBe Status.CREATED
+      (contentAsJson(result) \ "eligible").get.toString() mustBe "true"
     }
 
     "return a TEST_USER_NOT_FOUND response when an unknown NINO is specified" in new Setup {
 
-      given(underTest.service.create(ArgumentMatchers.eq(Nino("AA000003D")), ArgumentMatchers.eq("2017"), ArgumentMatchers.eq(true))(any())).willReturn(Future.failed(new NotFoundException("Expected test error")))
+      given(mockElgibilityService.create(ArgumentMatchers.eq(Nino("AA000003D")), ArgumentMatchers.eq("2017"), ArgumentMatchers.eq(true))(any())).willReturn(Future.failed(new NotFoundException("Expected test error")))
 
-      val result = await(underTest.create(Nino("AA000003D"), TaxYear("2017-18"))(createRequest))
+      val result = underTest.create(Nino("AA000003D"), TaxYear("2017-18"))(createRequest)
 
-      status(result) shouldBe Status.NOT_FOUND
-      jsonBodyOf(result) shouldBe Json.parse(
+      status(result) mustBe Status.NOT_FOUND
+      contentAsJson(result) mustBe Json.parse(
         """{
           |  "code": "TEST_USER_NOT_FOUND",
           |  "message": "No test individual exists with the specified National Insurance number"

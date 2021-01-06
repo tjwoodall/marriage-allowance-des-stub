@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,15 +21,17 @@ import models._
 import play.api.Logger
 import play.api.libs.json._
 import play.api.mvc._
-import services.{MarriageAllowanceEligibilityService, MarriageAllowanceEligibilityServiceImpl}
+import services.EligibilityService
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.NotFoundException
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
-trait MarriageAllowanceEligibilityController extends BaseController {
-  val service: MarriageAllowanceEligibilityService
+class EligibilityController @Inject()(
+                                       service: EligibilityService,
+                                       cc: ControllerComponents
+                                     )(implicit ec: ExecutionContext) extends BackendController(cc) {
 
   final def findEligibility: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[EligibilityRequest] { eligibilityRequest =>
@@ -62,6 +64,3 @@ trait MarriageAllowanceEligibilityController extends BaseController {
         InternalServerError(Json.toJson(ErrorInternalServerError))
   }
 }
-
-final class MarriageAllowanceEligibilityControllerImpl @Inject()(override val service: MarriageAllowanceEligibilityServiceImpl)
-  extends MarriageAllowanceEligibilityController

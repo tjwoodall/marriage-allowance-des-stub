@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,19 @@
 
 package controllers
 
-import config.AppContext
+import config.ApplicationConfig
 import javax.inject.Inject
 import models.APIAccess
-import play.api.http.HttpErrorHandler
-import play.api.mvc.Action
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 import views.txt
 
-class DocumentationController @Inject()(httpErrorHandler: HttpErrorHandler, appContext: AppContext) extends AssetsBuilder(httpErrorHandler) with BaseController {
+class DocumentationController @Inject()(assets: Assets, appContext: ApplicationConfig, cc: ControllerComponents) extends BackendController(cc) {
 
-  def definition = Action {
+  def definition: Action[AnyContent] = Action {
     Ok(txt.definition(APIAccess.build(appContext.access))).withHeaders(CONTENT_TYPE -> JSON)
   }
 
-  final def raml(version: String, file: String) = super.at(s"/public/api/conf/$version", file)
+  final def raml(version: String, file: String): Action[AnyContent] =
+    assets.at(s"/public/api/conf/$version", file)
 }

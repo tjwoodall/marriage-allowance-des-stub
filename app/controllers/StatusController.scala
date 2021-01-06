@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,15 +20,17 @@ import javax.inject.Inject
 import models.{MarriageAllowanceStatusCreationRequest, MarriageAllowanceStatusSummaryResponse, TaxYear}
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent}
-import services.{MarriageAllowanceStatusService, MarriageAllowanceStatusServiceImpl}
+import play.api.mvc.{Action, AnyContent, ControllerComponents}
+import services.StatusService
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.microservice.controller.BaseController
+import uk.gov.hmrc.play.bootstrap.controller.BackendController
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext
 
-trait MarriageAllowanceStatusController extends BaseController {
-  val service: MarriageAllowanceStatusService
+class StatusController @Inject()(
+                                  service: StatusService,
+                                  cc: ControllerComponents
+                                )(implicit ec: ExecutionContext) extends BackendController(cc) {
 
   final def find(utr: SaUtr, taxYearStart: String): Action[AnyContent] = Action.async {
     service.fetch(utr.utr, taxYearStart) map {
@@ -54,6 +56,3 @@ trait MarriageAllowanceStatusController extends BaseController {
     }
   }
 }
-
-final class MarriageAllowanceStatusControllerImpl @Inject()(override val service: MarriageAllowanceStatusServiceImpl)
-  extends MarriageAllowanceStatusController

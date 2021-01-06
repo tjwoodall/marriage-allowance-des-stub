@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,24 @@
 
 package controllers
 
-import models.{MarriageAllowanceStatusSummary, TaxYear}
+import models.{StatusSummary, TaxYear}
 import org.mockito.BDDMockito.given
-import org.scalatest.mockito.MockitoSugar
-import org.scalatestplus.play.OneAppPerSuite
-import play.api.http.Status._
+import org.scalatestplus.mockito.MockitoSugar
+import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import services.MarriageAllowanceStatusService
+import play.api.test.Helpers._
+import services.StatusService
 import uk.gov.hmrc.domain.SaUtr
-import uk.gov.hmrc.play.test.UnitSpec
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.microservice.filters.MicroserviceFilterSupport
 
-class MarriageAllowanceStatusSpec extends UnitSpec with MockitoSugar with OneAppPerSuite {
-  trait Setup extends MicroserviceFilterSupport {
+class MarriageAllowanceStatusSpec extends PlaySpec with MockitoSugar {
+
+  val mockStatusService: StatusService = mock[StatusService]
+  trait Setup {
     val jsonBody = Json.parse(
       """
         |{
@@ -47,23 +47,21 @@ class MarriageAllowanceStatusSpec extends UnitSpec with MockitoSugar with OneApp
 
     implicit val headerCarrier = HeaderCarrier()
 
-    val underTest = new MarriageAllowanceStatusController {
-      override val service: MarriageAllowanceStatusService = mock[MarriageAllowanceStatusService]
-    }
+    val underTest = new StatusController(mockStatusService, stubControllerComponents())
 
-    val deceasedStatusSummary = MarriageAllowanceStatusSummary("utr", "2014", "Recipient", true)
+    val deceasedStatusSummary = StatusSummary("utr", "2014", "Recipient", true)
   }
 
   "fetch" should {
 
     "return the response when called with a utr and taxYear" in new Setup {
 
-      given(underTest.service.fetch("utr", "2014")).willReturn(Future(Some(deceasedStatusSummary)))
+      given(mockStatusService.fetch("utr", "2014")).willReturn(Future(Some(deceasedStatusSummary)))
 
-      val result = await(underTest.find(SaUtr("utr"), "2014")(fetchRequest))
+      val result = underTest.find(SaUtr("utr"), "2014")(fetchRequest)
 
-      status(result) shouldBe OK
-      jsonBodyOf(result) shouldBe jsonBody
+      status(result) mustBe OK
+      contentAsJson(result) mustBe jsonBody
     }
   }
 
@@ -71,12 +69,12 @@ class MarriageAllowanceStatusSpec extends UnitSpec with MockitoSugar with OneApp
 
     "return a CREATED response with payload matching the request" in new Setup {
 
-      given(underTest.service.create("utr", "2014", "Recipient", true)).willReturn(Future(deceasedStatusSummary))
+      given(mockStatusService.create("utr", "2014", "Recipient", true)).willReturn(Future(deceasedStatusSummary))
 
-      val result = await(underTest.create(SaUtr("utr"), TaxYear("2014-15"))(createRequest))
+      val result = underTest.create(SaUtr("utr"), TaxYear("2014-15"))(createRequest)
 
-      status(result) shouldBe CREATED
-      jsonBodyOf(result) shouldBe jsonBody
+      status(result) mustBe CREATED
+      contentAsJson(result) mustBe jsonBody
     }
   }
 }

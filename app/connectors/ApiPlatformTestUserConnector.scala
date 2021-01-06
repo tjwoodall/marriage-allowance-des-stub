@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +16,23 @@
 
 package connectors
 
-import config.WSHttp
+import com.google.inject.Inject
+import config.ApplicationConfig
 import models.TestIndividual
-import play.api.{Configuration, Play}
-import play.api.Mode.Mode
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.play.config.ServicesConfig
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
 
-trait ApiPlatformTestUserConnector extends ServicesConfig {
-  override protected def mode: Mode = Play.current.mode
-  override protected def runModeConfiguration: Configuration = Play.current.configuration
+import scala.concurrent.{ExecutionContext, Future}
 
-  lazy val serviceUrl = baseUrl("api-platform-test-user")
+class ApiPlatformTestUserConnector @Inject()(
+                                              appConfig: ApplicationConfig,
+                                              http: DefaultHttpClient
+                                            )(implicit ec: ExecutionContext) {
+
+  val serviceUrl: String = appConfig.apiTestUserUrl
 
   def fetchByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
-    WSHttp.GET[TestIndividual](s"$serviceUrl/individuals/nino/$nino")
+    http.GET[TestIndividual](s"$serviceUrl/individuals/nino/$nino")
   }
 }
-
-object ApiPlatformTestUserConnector extends ApiPlatformTestUserConnector

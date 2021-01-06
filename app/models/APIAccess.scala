@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,6 @@ case class APIAccess(`type`: String, whitelistedApplicationIds: Option[Seq[Strin
 
 object APIAccess {
   def build(config: Option[Configuration])(version: String): APIAccess = APIAccess(
-    `type` = config.flatMap(_.getString(s"version-$version.type")).getOrElse("PRIVATE"),
-    whitelistedApplicationIds = config.foldLeft[Option[Seq[String]]](None){(_, conf) => conf.getStringSeq(s"version-$version.whitelistedApplicationIds")})
+    `type` = config.flatMap(_.getOptional[String](s"version-$version.type")).getOrElse("PRIVATE"),
+    whitelistedApplicationIds = config.foldLeft[Option[Seq[String]]](None){(_, conf) => conf.getOptional[Seq[String]](s"version-$version.whitelistedApplicationIds")})
 }

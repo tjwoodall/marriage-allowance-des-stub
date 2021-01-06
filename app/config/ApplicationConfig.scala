@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package config
 
-import play.api.libs.json.{JsObject, Json}
+import com.google.inject.Inject
+import play.api.Configuration
+import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
 
-class InvalidScenarioException(scenario: String) extends RuntimeException(s"$scenario is not a valid test scenario")
+class ApplicationConfig @Inject()(
+                                   configuration: Configuration,
+                                   runMode: RunMode
+                                 ) extends ServicesConfig(configuration, runMode) {
 
-object JsonErrorResponse {
-  def apply(code: String, message: String): JsObject = Json.obj("code" -> code, "message" -> message)
+  val access: Option[Configuration] = configuration.getOptional[Configuration]("api.access")
+  val apiTestUserUrl: String = baseUrl("api-platform-test-user")
 }

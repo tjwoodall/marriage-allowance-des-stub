@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 HM Revenue & Customs
+ * Copyright 2021 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,17 @@
 
 import play.api.libs.json.Json
 import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
+import play.api.libs.json.JodaReads._
+import play.api.libs.json.JodaWrites._
 
 package object models {
   implicit val objectIdFormat = ReactiveMongoFormats.objectIdFormats
   implicit val marriageAllowanceStatusCreationRequest = Json.format[MarriageAllowanceStatusCreationRequest]
   implicit val marriageAllowanceStatusSummaryResponseFormat = Json.format[MarriageAllowanceStatusSummaryResponse]
-  implicit val marriageAllowanceStatusSummaryFormat = Json.format[MarriageAllowanceStatusSummary]
+  implicit val marriageAllowanceStatusSummaryFormat = Json.format[StatusSummary]
   implicit val marriageAllowanceEligibilityCreationRequest = Json.format[MarriageAllowanceEligibilityCreationRequest]
   implicit val marriageAllowanceEligibilitySummaryResponseFormat = Json.format[MarriageAllowanceEligibilitySummaryResponse]
-  implicit val marriageAllowanceEligibilitySummaryFormat = Json.format[MarriageAllowanceEligibilitySummary]
+  implicit val marriageAllowanceEligibilitySummaryFormat = Json.format[EligibilitySummary]
 
   implicit val apiAccessFormat = Json.format[APIAccess]
 
