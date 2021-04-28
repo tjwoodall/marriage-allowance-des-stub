@@ -27,7 +27,6 @@ lazy val microservice = (project in file("."))
     unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
     evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     resolvers ++= Seq(
-        Resolver.bintrayRepo("hmrc", "releases"),
         Resolver.jcenterRepo
     )
   )
