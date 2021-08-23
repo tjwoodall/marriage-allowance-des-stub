@@ -8,8 +8,8 @@ object AppDependencies {
 
   lazy val compile: Seq[ModuleID] = Seq(
     ws,
-    "uk.gov.hmrc" %% "bootstrap-play-26" % "2.1.0",
-    "uk.gov.hmrc" %% "domain" % "5.10.0-play-26",
+    "uk.gov.hmrc" %% "bootstrap-backend-play-26" % "5.12.0",
+    "uk.gov.hmrc" %% "domain" % "5.11.0-play-26",
     "uk.gov.hmrc" %% "simple-reactivemongo" % "8.0.0-play-26",
     "com.typesafe.play" %% "play-json-joda" % "2.7.4"
   )

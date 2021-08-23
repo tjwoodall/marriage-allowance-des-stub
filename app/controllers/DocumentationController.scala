@@ -20,7 +20,7 @@ import config.ApplicationConfig
 import javax.inject.Inject
 import models.APIAccess
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
-import uk.gov.hmrc.play.bootstrap.controller.BackendController
+import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import views.txt
 
 class DocumentationController @Inject()(assets: Assets, appContext: ApplicationConfig, cc: ControllerComponents) extends BackendController(cc) {
