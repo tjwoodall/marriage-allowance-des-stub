@@ -18,12 +18,9 @@ package config
 
 import com.google.inject.Inject
 import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.{RunMode, ServicesConfig}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class ApplicationConfig @Inject()(
-                                   configuration: Configuration,
-                                   runMode: RunMode
-                                 ) extends ServicesConfig(configuration, runMode) {
+class ApplicationConfig @Inject()(configuration: Configuration) extends ServicesConfig(configuration) {
 
   val access: Option[Configuration] = configuration.getOptional[Configuration]("api.access")
   val apiTestUserUrl: String = baseUrl("api-platform-test-user")
