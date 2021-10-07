@@ -28,7 +28,6 @@ import stubs.ApiPlatformTestUserStub
 import scala.concurrent.duration.Duration
 
 trait IntegrationTest extends AnyFeatureSpec with BeforeAndAfterAll with BeforeAndAfterEach with Matchers with GuiceOneServerPerSuite with GivenWhenThen {
-  //override lazy val port = 9000
 
   implicit override lazy val app: Application = GuiceApplicationBuilder().configure(
       "auditing.enabled" -> false,
