@@ -18,7 +18,7 @@ package controllers
 
 import javax.inject.Inject
 import models.{MarriageAllowanceStatusCreationRequest, MarriageAllowanceStatusSummaryResponse, TaxYear}
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.StatusService
@@ -28,9 +28,10 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import scala.concurrent.ExecutionContext
 
 class StatusController @Inject()(
-                                  service: StatusService,
-                                  cc: ControllerComponents
-                                )(implicit ec: ExecutionContext) extends BackendController(cc) {
+  service: StatusService,
+  cc: ControllerComponents)(implicit ec: ExecutionContext)
+  extends BackendController(cc)
+  with Logging {
 
   final def find(utr: SaUtr, taxYearStart: String): Action[AnyContent] = Action.async {
     service.fetch(utr.utr, taxYearStart) map {
@@ -38,7 +39,7 @@ class StatusController @Inject()(
       case _ => NotFound
     } recover {
       case e =>
-        Logger.error("An error occurred while finding test data", e)
+        logger.error("An error occurred while finding test data", e)
         InternalServerError
     }
   }
@@ -51,7 +52,7 @@ class StatusController @Inject()(
 
     } recover {
       case e =>
-        Logger.error("An error occurred while creating test data", e)
+        logger.error("An error occurred while creating test data", e)
         InternalServerError
     }
   }

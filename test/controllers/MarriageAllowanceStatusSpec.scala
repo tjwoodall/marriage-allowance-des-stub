@@ -18,19 +18,19 @@ package controllers
 
 import models.{StatusSummary, TaxYear}
 import org.mockito.BDDMockito.given
-import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.StatusService
+import test.utils.MockitoMocking
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MarriageAllowanceStatusSpec extends PlaySpec with MockitoSugar {
+class MarriageAllowanceStatusSpec extends PlaySpec with MockitoMocking {
 
   val mockStatusService: StatusService = mock[StatusService]
   trait Setup {

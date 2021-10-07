@@ -18,7 +18,7 @@ package controllers
 
 import javax.inject.Inject
 import models._
-import play.api.Logger
+import play.api.Logging
 import play.api.libs.json._
 import play.api.mvc._
 import services.EligibilityService
@@ -29,15 +29,16 @@ import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
 import scala.concurrent.ExecutionContext
 
 class EligibilityController @Inject()(
-                                       service: EligibilityService,
-                                       cc: ControllerComponents
-                                     )(implicit ec: ExecutionContext) extends BackendController(cc) {
+  service: EligibilityService,
+  cc: ControllerComponents)(implicit ec: ExecutionContext)
+  extends BackendController(cc)
+  with Logging {
 
   final def findEligibility: Action[JsValue] = Action.async(parse.json) { implicit request =>
     withJsonBody[EligibilityRequest] { eligibilityRequest =>
       service.fetch(eligibilityRequest.nino, eligibilityRequest.taxYear) map {
         case Some(res) => Ok(Json.toJson(MarriageAllowanceEligibilitySummaryResponse(res.eligible)))
-        case _ => NotFound(Json.toJson(ErrorNotFound))
+        case _ => NotFound(Json.toJson[ErrorResponse](ErrorNotFound))
       } recover fromFailure
     }
   }
@@ -52,15 +53,15 @@ class EligibilityController @Inject()(
       case _: NotFoundException =>
         NotFound(JsonErrorResponse("TEST_USER_NOT_FOUND", "No test individual exists with the specified National Insurance number"))
       case e  =>
-        Logger.error("An error occurred while creating test data", e)
+        logger.error("An error occurred while creating test data", e)
         InternalServerError
     }
   }
 
     private def fromFailure: PartialFunction[Throwable, Result] = {
-      case _: NotFoundException => NotFound(Json.toJson(ErrorNotFound))
+      case _: NotFoundException => NotFound(Json.toJson[ErrorResponse](ErrorNotFound))
       case e: Throwable =>
-        Logger.error("An error occurred while finding test data", e)
-        InternalServerError(Json.toJson(ErrorInternalServerError))
+        logger.error("An error occurred while finding test data", e)
+        InternalServerError(Json.toJson[ErrorResponse](ErrorInternalServerError))
   }
 }
