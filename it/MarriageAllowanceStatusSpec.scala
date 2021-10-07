@@ -17,8 +17,8 @@
 import play.api.http.Status.{CREATED, NOT_FOUND, OK}
 
 class MarriageAllowanceStatusSpec extends IntegrationTest {
-  feature("Fetch marriage allowance status") {
-    scenario("Marriage allowance status data is not returned for the given utr and taxYear as it hasn't been primed") {
+  Feature("Fetch marriage allowance status") {
+    Scenario("Marriage allowance status data is not returned for the given utr and taxYear as it hasn't been primed") {
       When("I fetch marriage allowance status data for a given utr and taxYear")
       val fetchResponse = fetchMarriageAllowanceStatus("3333333333", "2014")
 
@@ -27,8 +27,8 @@ class MarriageAllowanceStatusSpec extends IntegrationTest {
     }
   }
 
-  feature("Prime marriage allowance status") {
-    scenario("Marriage allowance status data is returned for the given utr and taxYear when primed with the default scenario") {
+  Feature("Prime marriage allowance status") {
+    Scenario("Marriage allowance status data is returned for the given utr and taxYear when primed with the default scenario") {
       When("I prime marriage allowance status data for a given utr and taxYear")
       val primeResponse = primeMarriageAllowanceStatus("1111111111", "2016-17", """{"status":"something","deceased":true}""")
 

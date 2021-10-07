@@ -5,8 +5,8 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
 
-
 lazy val appName = "marriage-allowance-des-stub"
+val silencerVersion = "1.7.6"
 
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
@@ -16,7 +16,7 @@ lazy val microservice = (project in file("."))
     headerSettings(IntegrationTest),
     automateHeaderSettings(IntegrationTest),
     scalaSettings,
-    scalaVersion := "2.12.12",
+    scalaVersion := "2.12.15",
     majorVersion := 0,
     publishingSettings,
     defaultSettings(),
@@ -24,15 +24,21 @@ lazy val microservice = (project in file("."))
     name := appName,
     libraryDependencies ++= AppDependencies.all,
     retrieveManaged := true,
-    unmanagedResourceDirectories in Compile += baseDirectory.value / "resources",
-    evictionWarningOptions in update := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+    Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
+    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     resolvers ++= Seq(
         Resolver.jcenterRepo
     )
-  )
+  ).settings(
+    scalacOptions += "-P:silencer:pathFilters=routes,silencer:pathFilters=twirl",
+    libraryDependencies ++= Seq(
+        compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
+        "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
+    )
+)
 
 // Coverage configuration
-coverageMinimum := 75
+coverageMinimumStmtTotal := 75
 coverageFailOnMinimum := true
 coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo"
 

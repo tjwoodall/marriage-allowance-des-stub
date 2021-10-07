@@ -15,8 +15,9 @@
  */
 
 import java.util.concurrent.TimeUnit
-
 import org.scalatest._
+import org.scalatest.featurespec.AnyFeatureSpec
+import org.scalatest.matchers.should.Matchers
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.Application
 import play.api.http.HeaderNames
@@ -26,8 +27,7 @@ import stubs.ApiPlatformTestUserStub
 
 import scala.concurrent.duration.Duration
 
-trait IntegrationTest extends FeatureSpec with BeforeAndAfterAll with BeforeAndAfterEach with Matchers with GuiceOneServerPerSuite with GivenWhenThen {
-  override lazy val port = 9000
+trait IntegrationTest extends AnyFeatureSpec with BeforeAndAfterAll with BeforeAndAfterEach with Matchers with GuiceOneServerPerSuite with GivenWhenThen {
 
   implicit override lazy val app: Application = GuiceApplicationBuilder().configure(
       "auditing.enabled" -> false,

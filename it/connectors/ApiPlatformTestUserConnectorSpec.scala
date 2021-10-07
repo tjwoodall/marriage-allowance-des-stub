@@ -16,6 +16,7 @@
 
 package connectors
 
+import it.utils.UnitSpec
 import models.{IndividualDetails, TestIndividual}
 import org.joda.time.LocalDate
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
@@ -25,7 +26,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import stubs.ApiPlatformTestUserStub
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException, UpstreamErrorResponse}
-import uk.gov.hmrc.play.test.UnitSpec
 
 class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach with BeforeAndAfterAll with GuiceOneAppPerSuite {
 

@@ -19,13 +19,13 @@ import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration._
 import controllers.DocumentationController
+import it.utils.UnitSpec
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterEach, TestData}
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.{Application, Mode}
-import uk.gov.hmrc.play.test.UnitSpec
 
 /**
   * Testcase to verify the capability of integration with the API platform.
