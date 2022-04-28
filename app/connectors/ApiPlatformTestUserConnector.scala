@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,20 +19,30 @@ package connectors
 import com.google.inject.Inject
 import config.ApplicationConfig
 import models.TestIndividual
+import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.domain.Nino
-import uk.gov.hmrc.http.HeaderCarrier
-import uk.gov.hmrc.play.bootstrap.http.DefaultHttpClient
+import uk.gov.hmrc.http.HttpReads.Implicits._
+import uk.gov.hmrc.http.HttpReadsInstances.readEitherOf
+import uk.gov.hmrc.http.{NotFoundException, _}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ApiPlatformTestUserConnector @Inject()(
                                               appConfig: ApplicationConfig,
-                                              http: DefaultHttpClient
+                                              http: HttpClient
                                             )(implicit ec: ExecutionContext) {
 
   val serviceUrl: String = appConfig.apiTestUserUrl
 
   def fetchByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
-    http.GET[TestIndividual](s"$serviceUrl/individuals/nino/$nino")
+    http
+      .GET[Either[UpstreamErrorResponse, HttpResponse]](s"$serviceUrl/individuals/nino/$nino")
+      .map {
+        case Right(response) => Right(response.json.as[TestIndividual]).right.get
+        case Left(error) => {
+          if (error.statusCode == NOT_FOUND) throw new NotFoundException(error.message)
+          else throw Left(error).left.get
+        }
+      }
   }
 }
