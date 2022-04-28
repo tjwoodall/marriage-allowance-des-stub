@@ -38,10 +38,10 @@ class ApiPlatformTestUserConnector @Inject()(
     http
       .GET[Either[UpstreamErrorResponse, HttpResponse]](s"$serviceUrl/individuals/nino/$nino")
       .map {
-        case Right(response) => Right(response.json.as[TestIndividual]).right.get
+        case Right(response) => response.json.as[TestIndividual]
         case Left(error) => {
           if (error.statusCode == NOT_FOUND) throw new NotFoundException(error.message)
-          else throw Left(error).left.get
+          else throw error
         }
       }
   }

@@ -30,7 +30,7 @@ lazy val microservice = (project in file("."))
         Resolver.jcenterRepo
     )
   ).settings(
-    scalacOptions ++= Seq("-P:silencer:pathFilters=routes,silencer:pathFilters=twirl", "-Xfatal-warnings"),
+    scalacOptions ++= Seq("-P:silencer:pathFilters=routes,silencer:pathFilters=twirl"),
     libraryDependencies ++= Seq(
         compilerPlugin("com.github.ghik" % "silencer-plugin" % silencerVersion cross CrossVersion.full),
         "com.github.ghik" % "silencer-lib" % silencerVersion % Provided cross CrossVersion.full
