@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 HM Revenue & Customs
+ * Copyright 2022 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package it.utils
 
 import akka.stream.Materializer
-import akka.util.{ByteString, Timeout}
+import akka.util.{ByteString}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.OptionValues
 import org.scalatest.matchers.should.Matchers
@@ -46,7 +46,7 @@ trait UnitSpec extends AnyWordSpec with Matchers with OptionValues {
 
   def status(of: Future[Result])(implicit timeout: Duration): Int = status(Await.result(of, timeout))
 
-  def status(of: Accumulator[ByteString, Result])(implicit timeout: Timeout, mat: Materializer): Int = status(of.run())
+  def status(of: Accumulator[ByteString, Result])(implicit mat: Materializer): Int = status(of.run())
 
   def jsonBodyOf(result: Result)(implicit mat: Materializer): JsValue = {
     Json.parse(bodyOf(result))
