@@ -30,8 +30,8 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
   private val eligibleTrue = """{"eligible":true}"""
 
 
-  feature("Fetch marriage allowance eligibility with post method") {
-    scenario("Marriage allowance eligibility data is not returned for the given utr and taxYear as it hasn't been primed") {
+  Feature("Fetch marriage allowance eligibility with post method") {
+    Scenario("Marriage allowance eligibility data is not returned for the given utr and taxYear as it hasn't been primed") {
       When("I fetch marriage allowance eligibility data for a given utr and taxYear")
       val fetchResponse = fetchMarriageAllowanceEligibilityPost("AB000003D", "Firstname", "Surname", "1980-01-01", "2014")
 
@@ -40,8 +40,8 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
     }
   }
 
-  feature("Prime marriage allowance eligibility with post") {
-    scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario") {
+  Feature("Prime marriage allowance eligibility with post") {
+    Scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario") {
       When("I prime marriage allowance eligibility data for a given utr and taxYear")
       val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", eligibleTrue)
 
@@ -60,8 +60,8 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
     }
   }
 
-  feature("Prime marriage allowance eligibility with post (version agnostic)") {
-    scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario") {
+  Feature("Prime marriage allowance eligibility with post (version agnostic)") {
+    Scenario("Marriage allowance eligibility data is returned for the given nine and taxYear when primed with the default scenario") {
       When("I prime marriage allowance eligibility data for a given utr and taxYear")
       val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", eligibleTrue)
 
