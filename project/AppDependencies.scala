@@ -8,6 +8,7 @@ object AppDependencies {
     "uk.gov.hmrc"          %% "bootstrap-backend-play-28" % "5.14.0",
     "uk.gov.hmrc"          %% "domain"                    % "6.2.0-play-28",
     "uk.gov.hmrc"          %% "simple-reactivemongo"      % "8.0.0-play-26",
+    "uk.gov.hmrc.mongo"    %% "hmrc-mongo-play-28"        % "0.66.0"
   )
 
   lazy val test: Seq[ModuleID] = Seq(
