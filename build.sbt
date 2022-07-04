@@ -31,6 +31,7 @@ lazy val microservice = (project in file("."))
     )
   ).settings(
     scalacOptions ++= Seq(
+      "-feature",
       "-Xfatal-warnings",
       "-P:silencer:pathFilters=routes,silencer:pathFilters=twirl"
     ),
