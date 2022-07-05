@@ -37,12 +37,12 @@ class MarriageAllowanceStatusRepository @Inject()(
     )
   )
 ) {
-  def store(marriageAllowanceStatusSummary: StatusSummary): Future[StatusSummary] = {
+
+  def store(marriageAllowanceStatusSummary: StatusSummary): Future[StatusSummary] =
     collection
       .insertOne(marriageAllowanceStatusSummary)
       .toFuture
       .map { _ => marriageAllowanceStatusSummary }
-  }
 
   def fetch(utr: String, taxYear: String): Future[Option[StatusSummary]] =
     collection
