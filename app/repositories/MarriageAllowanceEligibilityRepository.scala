@@ -18,20 +18,43 @@ package repositories
 
 import com.google.inject.Inject
 import models._
-import play.modules.reactivemongo.ReactiveMongoComponent
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import org.mongodb.scala.model.{Filters, IndexModel, Indexes}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MarriageAllowanceEligibilityRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)
-  extends ReactiveRepository("marriage-allowance-eligibility", reactiveMongoComponent.mongoConnector.db,
-  marriageAllowanceEligibilitySummaryFormat, objectIdFormat) {
-  def store[T <: EligibilitySummary](marriageAllowanceEligibilitySummary: T): Future[T] =
-    for{
-      _ <- remove("nino" -> marriageAllowanceEligibilitySummary.nino, "taxYearStart" -> marriageAllowanceEligibilitySummary.taxYearStart)
-      _ <- insert(marriageAllowanceEligibilitySummary)
-    } yield marriageAllowanceEligibilitySummary
+class MarriageAllowanceEligibilityRepository @Inject()(
+  mongoComponent: MongoComponent
+) extends PlayMongoRepository[EligibilitySummary](
+  mongoComponent = mongoComponent,
+  collectionName = "marriage-allowance-eligibility",
+  domainFormat = EligibilitySummary.format,
+  indexes = Seq(
+    IndexModel(
+      Indexes.ascending("nino", "taxYearStart")
+    )
+  )
+) {
 
-  def fetch(nino: String, taxYearStart: String): Future[Option[EligibilitySummary]] = find("nino" -> nino, "taxYearStart" -> taxYearStart) map(_.headOption)
+  def store(summary: EligibilitySummary): Future[EligibilitySummary] =
+    collection
+      .insertOne(summary)
+      .toFuture
+      .map { _ => summary }
+
+  def fetch(nino: String, taxYearStart: String): Future[Option[EligibilitySummary]] =
+    collection
+      .find(
+        Filters.and(
+          Filters.equal("nino", nino),
+          Filters.equal("taxYearStart", taxYearStart)
+        )
+      )
+      .toFuture
+      .map {
+        case Nil => None
+        case summary :: _ => Some(summary)
+      }
 }
