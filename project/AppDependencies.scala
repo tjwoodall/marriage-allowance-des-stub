@@ -7,13 +7,11 @@ object AppDependencies {
     ws,
     "uk.gov.hmrc"          %% "bootstrap-backend-play-28" % "5.14.0",
     "uk.gov.hmrc"          %% "domain"                    % "6.2.0-play-28",
-    "uk.gov.hmrc"          %% "simple-reactivemongo"      % "8.0.0-play-26",
     "uk.gov.hmrc.mongo"    %% "hmrc-mongo-play-28"        % "0.66.0"
   )
 
   lazy val test: Seq[ModuleID] = Seq(
     "org.scalatestplus.play" %% "scalatestplus-play" % "5.1.0",
-    "uk.gov.hmrc"            %% "reactivemongo-test" % "5.0.0-play-28",
     "org.mockito"             % "mockito-core"       % "3.12.4",
     "com.vladsch.flexmark"    % "flexmark-all"       % "0.36.8"
   ).map(_ % "test")
