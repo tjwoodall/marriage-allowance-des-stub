@@ -15,10 +15,8 @@
  */
 
 import play.api.libs.json.Json
-import uk.gov.hmrc.mongo.json.ReactiveMongoFormats
 
 package object models {
-  implicit val objectIdFormat = ReactiveMongoFormats.objectIdFormats
   implicit val marriageAllowanceStatusCreationRequest = Json.format[MarriageAllowanceStatusCreationRequest]
   implicit val marriageAllowanceStatusSummaryResponseFormat = Json.format[MarriageAllowanceStatusSummaryResponse]
   implicit val marriageAllowanceStatusSummaryFormat = Json.format[StatusSummary]
