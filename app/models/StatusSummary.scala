@@ -16,4 +16,23 @@
 
 package models
 
-final case class StatusSummary(utr: String, taxYear: String, status: String, deceased: Boolean)
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
+
+final case class StatusSummary(
+  utr: String,
+  taxYear: String,
+  status: String,
+  deceased: Boolean
+)
+
+object StatusSummary {
+
+  implicit val format: Format[StatusSummary] = {
+    ( (__ \ "utr").format[String]
+    ~ (__ \ "taxYear").format[String]
+    ~ (__ \ "status").format[String]
+    ~ (__ \ "deceased").format[Boolean]
+    )(StatusSummary.apply, unlift(StatusSummary.unapply))
+  }
+}

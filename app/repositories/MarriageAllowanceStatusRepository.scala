@@ -18,22 +18,43 @@ package repositories
 
 import com.google.inject.Inject
 import models._
-import play.modules.reactivemongo.ReactiveMongoComponent
-import reactivemongo.bson.BSONObjectID
-import uk.gov.hmrc.mongo.ReactiveRepository
+import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
+import uk.gov.hmrc.mongo.MongoComponent
+import org.mongodb.scala.model.{Filters, IndexModel, Indexes}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class MarriageAllowanceStatusRepository @Inject()(reactiveMongoComponent: ReactiveMongoComponent)
-  extends ReactiveRepository[StatusSummary, BSONObjectID]("marriage-allowance-status", reactiveMongoComponent.mongoConnector.db,
-  marriageAllowanceStatusSummaryFormat, objectIdFormat) {
-  def store[T <: StatusSummary](marriageAllowanceStatusSummary: T): Future[T] =
-    for{
-      _ <- remove("utr" -> marriageAllowanceStatusSummary.utr, "taxYear" -> marriageAllowanceStatusSummary.taxYear)
-      _ <- insert(marriageAllowanceStatusSummary)
-    } yield marriageAllowanceStatusSummary
+class MarriageAllowanceStatusRepository @Inject()(
+  mongoComponent: MongoComponent
+) extends PlayMongoRepository[StatusSummary](
+  mongoComponent = mongoComponent,
+  collectionName = "marriage-allowance-status",
+  domainFormat = StatusSummary.format,
+  indexes = Seq(
+    IndexModel(
+      Indexes.ascending("utr", "taxYear")
+    )
+  )
+) {
+
+  def store(marriageAllowanceStatusSummary: StatusSummary): Future[StatusSummary] =
+    collection
+      .insertOne(marriageAllowanceStatusSummary)
+      .toFuture
+      .map { _ => marriageAllowanceStatusSummary }
 
   def fetch(utr: String, taxYear: String): Future[Option[StatusSummary]] =
-    find("utr" -> utr, "taxYear" -> taxYear) map(_.headOption)
+    collection
+      .find(
+        Filters.and(
+          Filters.equal("utr", utr),
+          Filters.equal("taxYear", taxYear)
+        )
+      )
+      .toFuture
+      .map {
+        case Nil => None
+        case statusSummary :: _ => Some(statusSummary)
+      }
 }
