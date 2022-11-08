@@ -9,7 +9,7 @@ lazy val appName = "marriage-allowance-des-stub"
 val silencerVersion = "1.7.6"
 
 lazy val microservice = (project in file("."))
-  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .configs(IntegrationTest)
   .settings(
     integrationTestSettings(),

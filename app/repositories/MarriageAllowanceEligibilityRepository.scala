@@ -17,17 +17,18 @@
 package repositories
 
 import com.google.inject.Inject
+import javax.inject.Singleton
 import models._
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.MongoComponent
 import org.mongodb.scala.model.{Filters, IndexModel, Indexes}
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
+@Singleton
 class MarriageAllowanceEligibilityRepository @Inject()(
   mongoComponent: MongoComponent
-) extends PlayMongoRepository[EligibilitySummary](
+)(implicit ec: ExecutionContext) extends PlayMongoRepository[EligibilitySummary](
   mongoComponent = mongoComponent,
   collectionName = "marriage-allowance-eligibility",
   domainFormat = EligibilitySummary.format,

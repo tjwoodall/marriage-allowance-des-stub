@@ -22,6 +22,8 @@ import org.scalatestplus.play.PlaySpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class MarriageAllowanceEligibilityRepositorySpec extends PlaySpec with DefaultPlayMongoRepositorySupport[EligibilitySummary] {
   override lazy val repository = new MarriageAllowanceEligibilityRepository(mongoComponent)
 
