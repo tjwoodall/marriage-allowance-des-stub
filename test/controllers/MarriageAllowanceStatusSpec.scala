@@ -54,7 +54,7 @@ class MarriageAllowanceStatusSpec extends PlaySpec with MockitoMocking {
 
   "fetch" should {
 
-    "return the response when called with a utr and taxYear" in new Setup {
+    "return the response when the call to the service returns an item" in new Setup {
 
       given(mockStatusService.fetch("utr", "2014")).willReturn(Future(Some(deceasedStatusSummary)))
 
@@ -62,6 +62,22 @@ class MarriageAllowanceStatusSpec extends PlaySpec with MockitoMocking {
 
       status(result) mustBe OK
       contentAsJson(result) mustBe jsonBody
+    }
+    "return a notFound response when the call to the service returns nothing" in new Setup {
+
+      given(mockStatusService.fetch("utr", "2014")).willReturn(Future(None))
+
+      val result = underTest.find(SaUtr("utr"), "2014")(fetchRequest)
+
+      status(result) mustBe NOT_FOUND
+    }
+    "return an internal server error when the fetching fails" in new Setup {
+
+      given(mockStatusService.fetch("utr", "2014")).willReturn(Future.failed(new NullPointerException))
+
+      val result = underTest.find(SaUtr("utr"), "2014")(fetchRequest)
+
+      status(result) mustBe INTERNAL_SERVER_ERROR
     }
   }
 
@@ -75,6 +91,14 @@ class MarriageAllowanceStatusSpec extends PlaySpec with MockitoMocking {
 
       status(result) mustBe CREATED
       contentAsJson(result) mustBe jsonBody
+    }
+    "return a INTERNAL_SERVER_ERROR response when the creation fails" in new Setup {
+
+      given(mockStatusService.create("utr", "2014", "Recipient", true)).willReturn(Future.failed(new NullPointerException))
+
+      val result = underTest.create(SaUtr("utr"), TaxYear("2014-15"))(createRequest)
+
+      status(result) mustBe INTERNAL_SERVER_ERROR
     }
   }
 }

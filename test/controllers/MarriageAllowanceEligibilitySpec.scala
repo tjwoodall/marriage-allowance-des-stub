@@ -38,7 +38,7 @@ class MarriageAllowanceEligibilitySpec extends PlaySpec with MockitoMocking {
   val mockElgibilityService: EligibilityService = mock[EligibilityService]
 
   trait Setup {
-    val fetchRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json")
+    val fetchRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json").withBody[JsValue](Json.parse("""{"nino":"AA000003D", "firstname": "John", "surname": "Smith", "dateOfBirth": "1980-01-01", "taxYearStart": "2020-21"}"""))
     val createRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json").withBody[JsValue](Json.parse("""{"eligible":true}"""))
     implicit val headerCarrier = HeaderCarrier()
 
@@ -46,6 +46,38 @@ class MarriageAllowanceEligibilitySpec extends PlaySpec with MockitoMocking {
 
     val eligibleSummary = EligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", true)
     val ineligibleSummary = EligibilitySummary("nino", "2014", "firstname", "surname", "1980-01-31", false)
+  }
+
+  "findEligibility" should {
+    "return a success when the service successfully fetches the eligibility" in new Setup {
+      given(mockElgibilityService.fetch(ArgumentMatchers.eq(Nino("AA000003D")), ArgumentMatchers.eq("2020-21"))).willReturn(Future.successful(Some(eligibleSummary)))
+
+      val result = underTest.findEligibility(fetchRequest)
+
+      status(result) mustBe Status.OK
+      (contentAsJson(result) \ "eligible").get.toString() mustBe "true"
+    }
+    "return a not found when the service fails to fetch the eligibility" in new Setup {
+      given(mockElgibilityService.fetch(ArgumentMatchers.eq(Nino("AA000003D")), ArgumentMatchers.eq("2020-21"))).willReturn(Future.successful(None))
+
+      val result = underTest.findEligibility(fetchRequest)
+
+      status(result) mustBe Status.NOT_FOUND
+    }
+    "return a not found when the service throws a NotFoundException" in new Setup {
+      given(mockElgibilityService.fetch(ArgumentMatchers.eq(Nino("AA000003D")), ArgumentMatchers.eq("2020-21"))).willReturn(Future.failed(new NotFoundException("Not Found")))
+
+      val result = underTest.findEligibility(fetchRequest)
+
+      status(result) mustBe Status.NOT_FOUND
+    }
+    "return a internal server error when the service throws any other exception" in new Setup {
+      given(mockElgibilityService.fetch(ArgumentMatchers.eq(Nino("AA000003D")), ArgumentMatchers.eq("2020-21"))).willReturn(Future.failed(new NullPointerException))
+
+      val result = underTest.findEligibility(fetchRequest)
+
+      status(result) mustBe Status.INTERNAL_SERVER_ERROR
+    }
   }
 
   "create" should {
@@ -71,6 +103,15 @@ class MarriageAllowanceEligibilitySpec extends PlaySpec with MockitoMocking {
           |  "code": "TEST_USER_NOT_FOUND",
           |  "message": "No test individual exists with the specified National Insurance number"
           |}""".stripMargin)
+    }
+
+    "return an INTERNAL_SERVER_ERROR response when the creation fails" in new Setup {
+
+      given(mockElgibilityService.create(ArgumentMatchers.eq(Nino("AA000003D")), ArgumentMatchers.eq("2017"), ArgumentMatchers.eq(true))(any())).willReturn(Future.failed(new NullPointerException))
+
+      val result = underTest.create(Nino("AA000003D"), TaxYear("2017-18"))(createRequest)
+
+      status(result) mustBe INTERNAL_SERVER_ERROR
     }
   }
 }

@@ -9,7 +9,7 @@ lazy val appName = "marriage-allowance-des-stub"
 val silencerVersion = "1.7.6"
 
 lazy val microservice = (project in file("."))
-  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin, SbtArtifactory)
+  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
   .configs(IntegrationTest)
   .settings(
     integrationTestSettings(),
@@ -44,5 +44,5 @@ lazy val microservice = (project in file("."))
 // Coverage configuration
 coverageMinimumStmtTotal := 17.27
 coverageFailOnMinimum := true
-coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo"
+coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;.*Routes.*;.*config.*;"
 
