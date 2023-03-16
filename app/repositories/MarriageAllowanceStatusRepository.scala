@@ -42,7 +42,7 @@ class MarriageAllowanceStatusRepository @Inject()(
   def store(marriageAllowanceStatusSummary: StatusSummary): Future[StatusSummary] =
     collection
       .insertOne(marriageAllowanceStatusSummary)
-      .toFuture
+      .toFuture()
       .map { _ => marriageAllowanceStatusSummary }
 
   def fetch(utr: String, taxYear: String): Future[Option[StatusSummary]] =
@@ -53,9 +53,9 @@ class MarriageAllowanceStatusRepository @Inject()(
           Filters.equal("taxYear", taxYear)
         )
       )
-      .toFuture
+      .toFuture()
       .map {
-        case Nil => None
         case statusSummary :: _ => Some(statusSummary)
+        case _ => None
       }
 }
