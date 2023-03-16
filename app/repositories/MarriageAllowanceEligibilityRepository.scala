@@ -39,6 +39,8 @@ class MarriageAllowanceEligibilityRepository @Inject()(
   )
 ) {
 
+  override lazy val requiresTtlIndex = false
+
   def store(summary: EligibilitySummary): Future[EligibilitySummary] =
     collection
       .insertOne(summary)

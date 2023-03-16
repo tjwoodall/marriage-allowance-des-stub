@@ -6,7 +6,7 @@ object AppDependencies {
   val scalatestVersion = "3.2.14"
   val scalatestplusVersion = "5.1.0"
   val flexmarkallVersion = "0.62.2"
-  val hmrcMongoVersion = "0.73.0"
+  val hmrcMongoVersion = "1.1.0"
 
   lazy val compile: Seq[ModuleID] = Seq(
     ws,
