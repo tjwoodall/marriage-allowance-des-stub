@@ -35,7 +35,7 @@ class StatusServiceSpec extends PlaySpec with MockitoMocking with BeforeAndAfter
 
   val testService: StatusService = new MockStatusService
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     reset(mockStatusRepo)
   }
 

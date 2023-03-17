@@ -42,7 +42,7 @@ class EligibilityServiceSpec extends PlaySpec with MockitoMocking with BeforeAnd
 
   val testService: EligibilityService = new MockEligibilityService
 
-  override def beforeEach: Unit = {
+  override def beforeEach(): Unit = {
     reset(mockEligibilityRepo)
   }
 

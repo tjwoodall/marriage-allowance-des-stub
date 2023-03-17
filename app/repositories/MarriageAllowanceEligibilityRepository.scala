@@ -39,10 +39,12 @@ class MarriageAllowanceEligibilityRepository @Inject()(
   )
 ) {
 
+  override lazy val requiresTtlIndex = false
+
   def store(summary: EligibilitySummary): Future[EligibilitySummary] =
     collection
       .insertOne(summary)
-      .toFuture
+      .toFuture()
       .map { _ => summary }
 
   def fetch(nino: String, taxYearStart: String): Future[Option[EligibilitySummary]] =
@@ -53,9 +55,9 @@ class MarriageAllowanceEligibilityRepository @Inject()(
           Filters.equal("taxYearStart", taxYearStart)
         )
       )
-      .toFuture
+      .toFuture()
       .map {
-        case Nil => None
         case summary :: _ => Some(summary)
+        case _ => None
       }
 }

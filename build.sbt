@@ -6,7 +6,7 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin._
 import uk.gov.hmrc.versioning.SbtGitVersioning
 
 lazy val appName = "marriage-allowance-des-stub"
-val silencerVersion = "1.7.6"
+val silencerVersion = "1.7.12"
 
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtGitVersioning, SbtDistributablesPlugin)
@@ -16,7 +16,7 @@ lazy val microservice = (project in file("."))
     headerSettings(IntegrationTest),
     automateHeaderSettings(IntegrationTest),
     scalaSettings,
-    scalaVersion := "2.12.15",
+    scalaVersion := "2.13.8",
     majorVersion := 0,
     publishingSettings,
     defaultSettings(),

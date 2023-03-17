@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 HM Revenue & Customs
+ * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ class PlatformIntegrationSpec extends UnitSpec with ScalaFutures with BeforeAndA
       "appUrl" -> "http://microservice-name.protected.mdtp"
     )).in(Mode.Test).build()
 
-  override def beforeEach() {
+  override def beforeEach(): Unit = {
     wireMockServer.start()
     WireMock.configureFor(stubHost, stubPort)
     stubFor(post(urlMatching("/registration")).willReturn(aResponse().withStatus(204)))
