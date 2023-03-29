@@ -1,9 +1,9 @@
 openapi: 3.0.3
 info:
   title: Marriage Allowance
-  description: "This API provides resources related to [Marriage Allowance](https://www.gov.uk/marriage-allowance).\n\nMarriage Allowance lets the lower earner of a couple transfer some of their Personal Allowance to their husband, wife or civil partner. If they are eligible this will then lower their tax bill.\n\nIn particular, this API can\n\n* Retrieve an individual’s Marriage Allowance status\n* Check their partner’s eligibility to be a recipient of Marriage Allowance (useful if the individual is considering applying for Marriage Allowance)\nOn 28 February 2020 version 1.0 will be switched off.\n\nIf you are deploying after 28 February 2020, you should build based on version 2.0.\n\nIf you are deploying before 28 February 2020, you can continue building based on version 1.0 until that date. You must switch to version 2.0 on 28 February 2020.\n\nVersion 2.0 will be available from 23 October 2019 within the Sandbox and Production environment.\nThe endpoint in this API is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints). \nYour users must grant authority for your software to access it by signing in to their HMRC online account.\n\nThe API supports individual and agent users. Note that:\n- Individual users can only access their own information.\n- Agent users can only access their own clients’ data.\n\nThe following options are supported for agents:\n\n**Option 1: Agent services account**\n\nIf the agent uses an [agent services account](https://www.gov.uk/government/collections/hmrc-online-services-for-agents#agent-services-account),\nthey can access their [existing 64-8 clients](https://www.gov.uk/guidance/client-authorisation-an-overview)\nwho they have [linked to their agent services account](https://www.gov.uk/guidance/link-clients-to-your-agent-services-account#link-existing-clients)\n(restricted to 2 years’ history)\n\n**Option 2: HMRC online services for agents account**\n\nIf the agent uses an [HMRC online services for agents account](https://www.gov.uk/government/collections/hmrc-online-services-for-agents#hmrc-online-services-for-agents-account)\nwhich is enrolled for [Self Assessment for Agents](https://www.gov.uk/guidance/self-assessment-for-agents-online-service),\nthey will be able to access their [existing 64-8 clients](https://www.gov.uk/guidance/client-authorisation-an-overview)\n(restricted to 2 years’ history).\nWhen an API changes in a way that is backwards-incompatible, we increase the version number of the API. \nSee our [reference guide](/api-documentation/docs/reference-guide#versioning) for more on\nversioning.\nWe use standard HTTP status codes to show whether an API request succeeded or not. They are usually in the range:\n* 200 to 299 if it succeeded, including code 202 if it was accepted by an API that needs to wait for further action\n* 400 to 499 if it failed because of a client error by your application\n* 500 to 599 if it failed because of an error on our server\n\nErrors specific to each API are shown in the Endpoints section, under Response. \nSee our [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.\nYou can use the sandbox environment to [test this API](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing).\n\nIt supports [stateful behaviour](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing/stateful-behaviour). You can set up test data for this API using the [Marriage Allowance Test Support API](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/marriage-allowance-des-stub)."
+  description: "This API provides resources related to [Marriage Allowance](https://www.gov.uk/marriage-allowance).\n\nMarriage Allowance lets the lower earner of a couple transfer some of their Personal Allowance to their husband, wife or civil partner. If they are eligible this will then lower their tax bill.\n\nIn particular, this API can\n\n* Retrieve an individual’s Marriage Allowance status\n* Check their partner’s eligibility to be a recipient of Marriage Allowance (useful if the individual is considering applying for Marriage Allowance)\nOn 28 February 2020 version 1.0 will be switched off.\n\nVersion 2.0 will be released on 23 October 2019 within the Sandbox and Production environment.\nThe endpoint in this API is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints). \nYour users must grant authority for your software to access it by signing in to their HMRC online account.\n\nThe API supports individual and agent users. Note that:\n- Individual users can only access their own information.\n- Agent users can only access their own clients’ data.\n\nThe following options are supported for agents:\n\n**Option 1: Agent services account**\n\nIf the agent uses an [agent services account](https://www.gov.uk/government/collections/hmrc-online-services-for-agents#agent-services-account),\nthey can access their [existing 64-8 clients](https://www.gov.uk/guidance/client-authorisation-an-overview)\nwho they have [linked to their agent services account](https://www.gov.uk/guidance/link-clients-to-your-agent-services-account#link-existing-clients)\n(restricted to 2 years’ history)\n\n**Option 2: HMRC online services for agents account**\n\nIf the agent uses an [HMRC online services for agents account](https://www.gov.uk/government/collections/hmrc-online-services-for-agents#hmrc-online-services-for-agents-account)\nwhich is enrolled for [Self Assessment for Agents](https://www.gov.uk/guidance/self-assessment-for-agents-online-service),\nthey will be able to access their [existing 64-8 clients](https://www.gov.uk/guidance/client-authorisation-an-overview)\n(restricted to 2 years’ history).\nWhen an API changes in a way that is backwards-incompatible, we increase the version number of the API. \nSee our [reference guide](/api-documentation/docs/reference-guide#versioning) for more on\nversioning.\nWe use standard HTTP status codes to show whether an API request succeeded or not. They are usually in the range:\n* 200 to 299 if it succeeded, including code 202 if it was accepted by an API that needs to wait for further action\n* 400 to 499 if it failed because of a client error by your application\n* 500 to 599 if it failed because of an error on our server\n\nErrors specific to each API are shown in the Endpoints section, under Response. \nSee our [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.\nYou can use the sandbox environment to [test this API](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing).\n\nIt supports [stateful behaviour](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing/stateful-behaviour). You can set up test data for this API using the [Marriage Allowance Test Support API](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/marriage-allowance-des-stub)."
   contact: {}
-  version: '1.0'
+  version: '2.0'
 servers:
   - url: https://api.service.hmrc.gov.uk/
     description: Production
@@ -115,7 +115,7 @@ paths:
         - User-Restricted:
             - read:marriage-allowance
   /marriage-allowance/sa/{utr}/eligibility:
-    get:
+    post:
       tags:
         - marriage-allowance
       summary: Check Marriage Allowance eligibility
@@ -140,51 +140,28 @@ paths:
           schema:
             type: string
             example: '2234567890'
-        - name: nino
-          in: query
-          description: Partner’s (potential recipient’s) National Insurance number
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: string
-            example: AA000003D
-        - name: firstname
-          in: query
-          description: Partner’s (potential recipient’s) first name
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: string
-            example: John
-        - name: surname
-          in: query
-          description: Partner’s (potential recipient’s) surname
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: string
-            example: Smith
-        - name: dateOfBirth
-          in: query
-          description: Partner’s (potential recipient’s) date of birth in YYYY-MM-DD format
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: string
-            example: 1981-01-31
-        - name: taxYear
-          in: query
-          description: The tax year for which the Marriage Allowance eligibility is being retrieved, in the format YYYY-YY.
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: string
-            example: 2014-15
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: '#/components/schemas/MarriageAllowanceSaEligibilityrequest'
+                - example:
+                    nino: AA000003D
+                    firstname: John
+                    surname: Smith
+                    dateOfBirth: 1981-01-31
+                    taxYear: 2018-19
+            examples:
+              example-1:
+                value:
+                  nino: AA000003D
+                  firstname: John
+                  surname: Smith
+                  dateOfBirth: 1981-01-31
+                  taxYear: 2018-19
+        required: true
       responses:
         '200':
           description: 'OK'
@@ -215,40 +192,48 @@ paths:
                   description: Invalid UTR
                   value:
                     code: SA_UTR_INVALID
+                missingNino:
+                  description: Missing Nino
+                  value:
+                    code: BAD_REQUEST
                 invalidNino:
                   description: Invalid NINO
                   value:
                     code: NINO_INVALID
-                missingNino:
-                  description: Missing NINO
+                missingDateOfBirth:
+                  description: Missing date of birth
                   value:
-                    code: NINO_INVALID
+                    code: BAD_REQUEST
                 invalidDateOfBirth:
                   description: Invalid date of birth
                   value:
                     code: DOB_INVALID
-                missingDateOfBirth:
-                  description: Missing date of birth
-                  value:
-                    code: DOB_INVALID
-                invalidTaxYear:
-                  description: Invalid tax year
-                  value:
-                    code: TAX_YEAR_INVALID
                 missingTaxYear:
                   description: Missing tax year
+                  value:
+                    code: BAD_REQUEST
+                invalidTaxYear:
+                  description: Invalid tax year
                   value:
                     code: TAX_YEAR_INVALID
                 missingFirstName:
                   description: Missing first name
                   value:
                     code: BAD_REQUEST
+                invalidFirstName:
+                  description: Invalid first name
+                  value:
+                    code: FIRST_NAME_INVALID
                 missingSurname:
                   description: Missing surname
                   value:
                     code: BAD_REQUEST
+                invalidSurname:
+                  description: Invalid surname
+                  value:
+                    code: SURNAME_VALID
         '401':
-          description: 'Unauthorised'
+          description: 'Unathorised'
           headers: {}
           content:
             application/json:
@@ -302,6 +287,41 @@ components:
       properties:
         code:
           type: string
+    MarriageAllowanceSaEligibilityrequest:
+      title: MarriageAllowanceSaEligibilityrequest
+      required:
+        - nino
+        - firstname
+        - surname
+        - dateOfBirth
+        - taxYear
+      type: object
+      properties:
+        nino:
+          pattern: ^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))([A-Z]\s*){2})([0-9]\s*){6}([A-D]\s*)$
+          type: string
+          description: National Insurance number
+          example: AA000003D
+        firstname:
+          pattern: ^(.){1,35}$
+          type: string
+          description: Partner’s (potential recipient’s) first name
+          example: John
+        surname:
+          pattern: ^(.){1,35}$
+          type: string
+          description: Partner’s (potential recipient’s) surname
+          example: Wick
+        dateOfBirth:
+          pattern: ^(19|20)[0-9]{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$
+          type: string
+          description: Partner’s (potential recipient’s) date of birth in YYYY-MM-DD format
+          example: 1987-12-20
+        taxYear:
+          pattern: ^(19|20)[0-9]{2}-[1-9]{2}$
+          type: string
+          description: The tax year for which the Marriage Allowance eligibility is being retrieved, in the format YYYY-YY
+      description: Marriage Allowance eligibility
     MarriageAllowanceSaEligibilityresponse:
       title: MarriageAllowanceSaEligibilityresponse
       required:

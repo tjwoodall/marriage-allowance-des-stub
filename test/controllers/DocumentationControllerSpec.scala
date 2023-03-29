@@ -20,20 +20,42 @@ import akka.stream.Materializer
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.http.HeaderNames.CONTENT_TYPE
-import play.api.http.Status.OK
-import play.api.test.Helpers.{defaultAwaitTimeout, headers, status}
+import play.api.http.Status.{NOT_FOUND, OK}
+import play.api.test.Helpers.{contentAsString, defaultAwaitTimeout, headers, status}
 import play.api.test.{FakeRequest, Injecting}
+import utils.ResourceProvider
 
-class DocumentationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting {
+class DocumentationControllerSpec extends PlaySpec with GuiceOneAppPerSuite with Injecting with ResourceProvider {
 
-  val materializer: Materializer          = app.materializer
+  implicit val materializer: Materializer          = app.materializer
 
   lazy val controller: DocumentationController = inject[DocumentationController]
+  def applicationRamlContent(version: String): String = getResourceFileContent(s"/public/api/conf/$version/application.yaml")
+
 
   "DocumentationController" must {
-    "return OK status with application.raml in the body" in {
-      val result = controller.raml("1.0", "application.raml")(FakeRequest("GET", "/api/conf/1.0/application.raml"))
-      status(result) mustBe OK
+    "return" when {
+
+      val definitionVersions = Seq("1.0", "2.0")
+      definitionVersions foreach { version =>
+
+        s"200 when yaml is called for version $version" in {
+          val result = controller.yaml(version, "application.yaml")(FakeRequest("GET", s"/api/conf/$version/application.yaml"))
+
+          status(result) mustBe OK
+        }
+        s"the correct yaml is returned for version $version" in {
+          val result = controller.yaml(version, "application.yaml")(FakeRequest("GET", s"/api/conf/$version/application.yaml"))
+
+          contentAsString(result) mustBe applicationRamlContent(version)
+        }
+      }
+
+      "NOT_FOUND when invalid version of the yaml is called" in {
+        val result = controller.yaml("99999.0", "application.yaml")(FakeRequest())
+
+        status(result) mustBe NOT_FOUND
+      }
     }
     "return a Json definition" in {
       val result = controller.definition(FakeRequest("GET", "/api/definition"))
