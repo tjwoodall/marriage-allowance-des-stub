@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Marriage Allowance status",
+  "type": "object",
+  "properties": {
+    "status": {
+      "description": "The role of the taxpayer as recipient or transferor.",
+      "type": "string",
+      "oneOf": [
+        {
+          "enum": [ "Transferor" ],
+          "description": "The taxpayer has transferred personal allowance in the given tax year"
+        },
+        {
+          "enum": [ "Recipient" ],
+          "description": "The taxpayer has received personal allowance in the given tax year"
+        },
+        {
+          "enum": [ "None" ],
+          "description": "The taxpayer has not transferred or received personal allowance in the given tax year"
+        }
+      ]
+    },
+    "deceased": {
+      "description": "Whether the taxpayer is deceased or not.",
+      "type": "boolean"
+    }
+  },
+  "required": [ "status", "deceased" ]
+}

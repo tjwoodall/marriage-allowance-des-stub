@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Marriage Allowance eligibility",
+  "type": "object",
+  "properties": {
+    "nino": {
+      "description": "National Insurance number",
+      "type": "string",
+      "pattern": "^((?!(BG|GB|KN|NK|NT|TN|ZZ)|(D|F|I|Q|U|V)[A-Z]|[A-Z](D|F|I|O|Q|U|V))([A-Z]\\s*){2})([0-9]\\s*){6}([A-D]\\s*)$",
+      "example": "AA000003D"
+    },
+    "firstname": {
+      "description": "Partner’s (potential recipient’s) first name",
+      "type": "string",
+      "pattern": "^(.){1,35}$",
+      "example": "John"
+    },
+    "surname": {
+      "description": "Partner’s (potential recipient’s) surname",
+      "type": "string",
+      "pattern": "^(.){1,35}$",
+      "example": "Wick"
+    },
+    "dateOfBirth": {
+      "description": "Partner’s (potential recipient’s) date of birth in YYYY-MM-DD format",
+      "type": "string",
+      "pattern": "^(19|20)[0-9]{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$",
+      "example": "1987-12-20"
+    },
+    "taxYear": {
+      "description": "The tax year for which the Marriage Allowance eligibility is being retrieved, in the format YYYY-YY",
+      "type": "string",
+      "pattern": "^(19|20)[0-9]{2}-[1-9]{2}$",
+      "example": "2019-20"
+    }
+  },
+  "required": [
+    "nino",
+    "firstname",
+    "surname",
+    "dateOfBirth",
+    "taxYear"
+  ]
+}
