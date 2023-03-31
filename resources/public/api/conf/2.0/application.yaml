@@ -1,27 +1,22 @@
-openapi: 3.0.3
+openapi: 3.0.0
 info:
-  title: Marriage Allowance
+  title: Marriage Allowance Test Support
   description: "This API provides resources related to [Marriage Allowance](https://www.gov.uk/marriage-allowance).\n\nMarriage Allowance lets the lower earner of a couple transfer some of their Personal Allowance to their husband, wife or civil partner. If they are eligible this will then lower their tax bill.\n\nIn particular, this API can\n\n* Retrieve an individual’s Marriage Allowance status\n* Check their partner’s eligibility to be a recipient of Marriage Allowance (useful if the individual is considering applying for Marriage Allowance)\nOn 28 February 2020 version 1.0 will be switched off.\n\nVersion 2.0 will be released on 23 October 2019 within the Sandbox and Production environment.\nThe endpoint in this API is [user-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/user-restricted-endpoints). \nYour users must grant authority for your software to access it by signing in to their HMRC online account.\n\nThe API supports individual and agent users. Note that:\n- Individual users can only access their own information.\n- Agent users can only access their own clients’ data.\n\nThe following options are supported for agents:\n\n**Option 1: Agent services account**\n\nIf the agent uses an [agent services account](https://www.gov.uk/government/collections/hmrc-online-services-for-agents#agent-services-account),\nthey can access their [existing 64-8 clients](https://www.gov.uk/guidance/client-authorisation-an-overview)\nwho they have [linked to their agent services account](https://www.gov.uk/guidance/link-clients-to-your-agent-services-account#link-existing-clients)\n(restricted to 2 years’ history)\n\n**Option 2: HMRC online services for agents account**\n\nIf the agent uses an [HMRC online services for agents account](https://www.gov.uk/government/collections/hmrc-online-services-for-agents#hmrc-online-services-for-agents-account)\nwhich is enrolled for [Self Assessment for Agents](https://www.gov.uk/guidance/self-assessment-for-agents-online-service),\nthey will be able to access their [existing 64-8 clients](https://www.gov.uk/guidance/client-authorisation-an-overview)\n(restricted to 2 years’ history).\nWhen an API changes in a way that is backwards-incompatible, we increase the version number of the API. \nSee our [reference guide](/api-documentation/docs/reference-guide#versioning) for more on\nversioning.\nWe use standard HTTP status codes to show whether an API request succeeded or not. They are usually in the range:\n* 200 to 299 if it succeeded, including code 202 if it was accepted by an API that needs to wait for further action\n* 400 to 499 if it failed because of a client error by your application\n* 500 to 599 if it failed because of an error on our server\n\nErrors specific to each API are shown in the Endpoints section, under Response. \nSee our [reference guide](/api-documentation/docs/reference-guide#errors) for more on errors.\nYou can use the sandbox environment to [test this API](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing).\n\nIt supports [stateful behaviour](https://developer.service.hmrc.gov.uk/api-documentation/docs/testing/stateful-behaviour). You can set up test data for this API using the [Marriage Allowance Test Support API](https://developer.service.hmrc.gov.uk/api-documentation/docs/api/service/marriage-allowance-des-stub)."
   contact: {}
   version: '2.0'
 servers:
   - url: https://api.service.hmrc.gov.uk/
-    description: Production
     variables: {}
 paths:
-  /marriage-allowance/sa/{utr}/status:
-    get:
+  /marriage-allowance-test-support/sa/{utr}/status/{taxYear}:
+    post:
       tags:
-        - marriage-allowance
-      summary: Get Marriage Allowance status
+        - marriage-allowance-test-support
+      summary: Create Marriage Allowance status test data
       description: >
-        @*
-         * Copyright 2022 HM Revenue & Customs
-         *
-         *@
-
-        <p>This resource determines whether an individual taxpayer has Marriage Allowance for the given tax year. If they have Marriage Allowance it will return their role in the relationship (either 'Transferor' or 'Recipient').</p>
-      operationId: GetMarriageAllowancestatus
+        Lets you create Marriage Allowance status test data.
+        Supports the [Get Marriage Allowance status resource method](https://test-developer.service.hmrc.gov.uk/api-documentation/docs/api/service/marriage-allowance#_get-marriage-allowance-status_get_accordion) on the Marriage Allowance API.
+      operationId: CreateMarriageAllowancestatustestdata
       parameters:
         - name: utr
           in: path
