@@ -29,7 +29,7 @@ object AppDependencies {
     "org.scalatest"                %% "scalatest"            % scalatestVersion,
     "org.scalatestplus.play"       %% "scalatestplus-play"   % scalatestplusVersion,
     "org.scalaj"                   %% "scalaj-http"          % "2.4.2",
-    "com.github.tomakehurst"        % "wiremock-jre8"        % "2.34.0",
+    "com.github.tomakehurst"        % "wiremock-jre8"        % "2.35.0",
     "com.vladsch.flexmark"          % "flexmark-all"         % flexmarkallVersion,
     "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2",
     "uk.gov.hmrc"                  %% "bootstrap-test-play-28" % bootstrapVersion,
