@@ -19,7 +19,7 @@ object AppDependencies {
   lazy val test: Seq[ModuleID] = Seq(
     "org.scalatest"          %% "scalatest"               % scalatestVersion,
     "org.scalatestplus.play" %% "scalatestplus-play"      % scalatestplusVersion,
-    "org.mockito"             % "mockito-core"            % "4.8.1",
+    "org.mockito"             % "mockito-core"            % "5.2.0",
     "com.vladsch.flexmark"    % "flexmark-all"            % flexmarkallVersion,
     "uk.gov.hmrc.mongo"      %% "hmrc-mongo-test-play-28" % hmrcMongoVersion,
     "uk.gov.hmrc"            %% "bootstrap-test-play-28" % bootstrapVersion,
@@ -31,7 +31,7 @@ object AppDependencies {
     "org.scalaj"                   %% "scalaj-http"          % "2.4.2",
     "com.github.tomakehurst"        % "wiremock-jre8"        % "2.34.0",
     "com.vladsch.flexmark"          % "flexmark-all"         % flexmarkallVersion,
-    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.13.4",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2",
     "uk.gov.hmrc"                  %% "bootstrap-test-play-28" % bootstrapVersion,
   ).map(_ % "it")
 
