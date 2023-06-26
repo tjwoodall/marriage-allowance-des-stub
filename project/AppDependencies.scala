@@ -3,11 +3,11 @@ import play.sbt.PlayImport.ws
 
 object AppDependencies {
 
-  val scalatestVersion = "3.2.14"
+  val scalatestVersion = "3.2.16"
   val scalatestplusVersion = "5.1.0"
-  val flexmarkallVersion = "0.62.2"
-  val hmrcMongoVersion = "1.1.0"
-  val bootstrapVersion = "7.15.0"
+  val flexmarkallVersion = "0.64.8"
+  val hmrcMongoVersion = "1.3.0"
+  val bootstrapVersion = "7.16.0"
 
   lazy val compile: Seq[ModuleID] = Seq(
     ws,
@@ -19,7 +19,7 @@ object AppDependencies {
   lazy val test: Seq[ModuleID] = Seq(
     "org.scalatest"          %% "scalatest"               % scalatestVersion,
     "org.scalatestplus.play" %% "scalatestplus-play"      % scalatestplusVersion,
-    "org.mockito"             % "mockito-core"            % "5.2.0",
+    "org.mockito"             % "mockito-core"            % "5.4.0",
     "com.vladsch.flexmark"    % "flexmark-all"            % flexmarkallVersion,
     "uk.gov.hmrc.mongo"      %% "hmrc-mongo-test-play-28" % hmrcMongoVersion,
     "uk.gov.hmrc"            %% "bootstrap-test-play-28" % bootstrapVersion,
@@ -31,7 +31,7 @@ object AppDependencies {
     "org.scalaj"                   %% "scalaj-http"          % "2.4.2",
     "com.github.tomakehurst"        % "wiremock-jre8"        % "2.35.0",
     "com.vladsch.flexmark"          % "flexmark-all"         % flexmarkallVersion,
-    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.14.2",
+    "com.fasterxml.jackson.module" %% "jackson-module-scala" % "2.15.2",
     "uk.gov.hmrc"                  %% "bootstrap-test-play-28" % bootstrapVersion,
   ).map(_ % "it")
 
