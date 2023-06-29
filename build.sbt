@@ -14,7 +14,7 @@ lazy val microservice = (project in file("."))
     headerSettings(IntegrationTest),
     automateHeaderSettings(IntegrationTest),
     scalaSettings,
-    scalaVersion := "2.13.8",
+    scalaVersion := "2.13.10",
     majorVersion := 0,
     defaultSettings(),
     routesImport += "controllers.Binders._",
@@ -23,6 +23,7 @@ lazy val microservice = (project in file("."))
     retrieveManaged := true,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+    ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     resolvers ++= Seq(
       Resolver.jcenterRepo
     )
