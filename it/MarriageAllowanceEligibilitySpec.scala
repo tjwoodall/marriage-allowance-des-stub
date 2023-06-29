@@ -40,26 +40,7 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
       fetchResponse.code shouldBe NOT_FOUND
     }
   }
-
-
-  Feature("M1 Mac endpoint requires initialisation") {
-    Scenario("If this is an M1 Mac is expected to fail") {
-      When("I initialise the endpoint with a call I ignore the failure")
-      var enpointInitialisedByCall = false
-      try {
-        if (postEndpoint(s"nino/AC000003D/eligibility/2016-17", eligibleTrue).isSuccess) {
-          println("postEndpoint succeeded NOT on M1 Mac")
-          enpointInitialisedByCall = true
-        }
-      }
-      catch {
-        case e: Exception => println("postEndpoint failed as expected on M1 Mac")
-          enpointInitialisedByCall = true
-      }
-      enpointInitialisedByCall shouldBe true
-    }
-  }
-
+  
 
   Feature("Prime marriage allowance eligibility with post") {
     Scenario("Prime Marriage allowance eligibility data is returned for the given nino and taxYear when primed with the default scenario") {
