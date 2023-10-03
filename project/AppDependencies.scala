@@ -6,7 +6,7 @@ object AppDependencies {
   private val scalatestVersion = "3.2.16"
   private val scalatestplusVersion = "5.1.0"
   private val flexmarkallVersion = "0.62.2"
-  private val hmrcMongoVersion = "1.1.0"
+  private val hmrcMongoVersion = "1.3.0"
   private val bootstrapVersion = "7.15.0"
   private val playSuffix = "play-28"
 
