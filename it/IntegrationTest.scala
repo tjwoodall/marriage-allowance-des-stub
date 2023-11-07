@@ -14,61 +14,13 @@
  * limitations under the License.
  */
 
-import java.util.concurrent.TimeUnit
 import org.scalatest._
 import org.scalatest.featurespec.AnyFeatureSpec
 import org.scalatest.matchers.should.Matchers
-import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.Application
-import play.api.http.HeaderNames
-import play.api.inject.guice.GuiceApplicationBuilder
-import scalaj.http.{Http, HttpResponse}
-import stubs.ApiPlatformTestUserStub
-
-import scala.concurrent.duration.Duration
+import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 
 trait IntegrationTest
   extends AnyFeatureSpec
-    with BeforeAndAfterAll
-    with BeforeAndAfterEach
     with Matchers
-    with GuiceOneServerPerSuite
-    with GivenWhenThen {
-
-  implicit override lazy val app: Application = GuiceApplicationBuilder().configure(
-      "auditing.enabled" -> false,
-      "auditing.traceRequests" -> false,
-      "mongodb.uri" -> "mongodb://localhost:27017/marriage-allowance-des-stub",
-      "microservice.services.api-platform-test-user.port" -> 11112,
-      "run.mode" -> "It"
-    ).build()
-
-  val timeout = Duration(5, TimeUnit.SECONDS)
-  val serviceUrl = s"http://localhost:$port"
-
-  override def beforeAll(): Unit = {
-    super.beforeAll()
-    ApiPlatformTestUserStub.server.start()
-  }
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    ApiPlatformTestUserStub.server.resetMappings()
-  }
-
-  override def afterAll(): Unit = {
-    super.afterAll()
-    ApiPlatformTestUserStub.server.stop()
-  }
-
-  def getEndpoint(endpoint: String): HttpResponse[String] =
-    Http(s"$serviceUrl/$endpoint")
-      .asString
-
-  def postEndpoint(endpoint: String, payload: String, version: String = "1.0"): HttpResponse[String] = {
-    Http(s"$serviceUrl/$endpoint")
-      .postData(payload)
-      .header(HeaderNames.CONTENT_TYPE, "application/json")
-      .asString
-  }
-}
+    with GuiceOneAppPerSuite
+    with GivenWhenThen

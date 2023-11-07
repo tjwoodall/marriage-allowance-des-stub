@@ -20,19 +20,19 @@ import it.utils.UnitSpec
 import models.{IndividualDetails, TestIndividual}
 
 import java.time.LocalDate
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.Application
+import play.api.http.Status.{INTERNAL_SERVER_ERROR, NOT_FOUND}
 import play.api.inject.guice.GuiceApplicationBuilder
-import stubs.ApiPlatformTestUserStub
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.{HeaderCarrier, NotFoundException, UpstreamErrorResponse}
+import utils.WiremockHelper
 
-class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach with BeforeAndAfterAll with GuiceOneAppPerSuite {
+class ApiPlatformTestUserConnectorSpec extends UnitSpec with GuiceOneAppPerSuite with WiremockHelper {
 
   override def fakeApplication(): Application = GuiceApplicationBuilder()
     .configure(
-      "microservice.services.api-platform-test-user.port" -> ApiPlatformTestUserStub.port
+      "microservice.services.api-platform-test-user.port" -> server.port()
     ).build()
 
   val nino = Nino("WC885133C")
@@ -41,28 +41,13 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
   trait Setup {
     implicit val hc = HeaderCarrier()
 
-    val underTest: ApiPlatformTestUserConnector =
+    lazy val underTest: ApiPlatformTestUserConnector =
       app.injector.instanceOf[ApiPlatformTestUserConnector]
-  }
-
-  override def beforeAll() = {
-    super.beforeAll()
-    ApiPlatformTestUserStub.server.start()
-  }
-
-  override def beforeEach() = {
-    super.beforeEach()
-    ApiPlatformTestUserStub.server.resetMappings()
-  }
-
-  override def afterAll() = {
-    super.afterAll()
-    ApiPlatformTestUserStub.server.stop()
   }
 
   "fetchIndividual" should {
     "return the individual when a NINO that exists is specified" in new Setup {
-      ApiPlatformTestUserStub.willReturnTheIndividual(nino)
+      generateUserWithDefaultData(nino)
 
       val result = await(underTest.fetchByNino(nino))
 
@@ -70,7 +55,7 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
     }
 
     "fail when the NINO does not exist" in new Setup {
-      ApiPlatformTestUserStub.willNotFindTheIndividual()
+      generateUserWithErrorStatus(NOT_FOUND)
 
       intercept[NotFoundException] {
         await(underTest.fetchByNino(nino))
@@ -78,7 +63,7 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with BeforeAndAfterEach 
     }
 
     "fail when the remote service returns an error" in new Setup {
-      ApiPlatformTestUserStub.willReturnAnError()
+      generateUserWithErrorStatus(INTERNAL_SERVER_ERROR)
 
       intercept[UpstreamErrorResponse] {
         await(underTest.fetchByNino(nino))

@@ -14,30 +14,67 @@
  * limitations under the License.
  */
 
-import models.EligibilityRequest
+import play.api.Application
+import play.api.http.HeaderNames
 import play.api.http.Status.{CREATED, NOT_FOUND, OK}
-import play.api.libs.json.{JsSuccess, Json}
-import stubs.ApiPlatformTestUserStub
+import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.test.Helpers._
+import play.api.test.{FakeHeaders, FakeRequest}
 import uk.gov.hmrc.domain.Nino
+import utils.WiremockHelper
 
+class MarriageAllowanceEligibilitySpec extends IntegrationTest with WiremockHelper {
 
-class MarriageAllowanceEligibilitySpec extends IntegrationTest {
-
-  override def beforeEach(): Unit = {
-    super.beforeEach()
-    ApiPlatformTestUserStub.willReturnTheIndividual(Nino("AC000003D"))
-  }
+  override def fakeApplication(): Application = GuiceApplicationBuilder().configure(
+    "auditing.enabled" -> false,
+    "auditing.traceRequests" -> false,
+    "mongodb.uri" -> "mongodb://localhost:27017/marriage-allowance-des-stub",
+    "microservice.services.api-platform-test-user.port" -> server.port(),
+    "run.mode" -> "It"
+  ).build()
 
   private val eligibleTrue = """{"eligible":true}"""
+  def payload(nino: String, firstname:String, surname: String, dateOfBirth: String, taxYearStart: String) =
+    s"""
+       |{
+       |"nino": "$nino",
+       |"firstname": "$firstname",
+       |"surname": "$surname",
+       |"dateOfBirth": "$dateOfBirth",
+       |"taxYearStart": "$taxYearStart"
+       |}
+       |""".stripMargin
 
 
   Feature("Fetch marriage allowance eligibility with post method") {
     Scenario("Fetch Marriage allowance eligibility data is not returned for the given utr and taxYear as it hasn't been primed") {
       When("I fetch marriage allowance eligibility data for a given utr and taxYear")
-      val fetchResponse = fetchMarriageAllowanceEligibilityPost("AB000003D", "Firstname", "Surname", "1980-01-01", "2014")
+      val fetchRequest =
+        FakeRequest(
+          "POST",
+          "/marriage-allowance/citizen/eligibility",
+          FakeHeaders(Seq(HeaderNames.CONTENT_TYPE -> "application/json")),
+          payload("AB000003D", "Firstname", "Surname", "1980-01-01", "2014")
+        )
+      val fetchResponse = route(fakeApplication(), fetchRequest)
 
       Then("the response should not contain marriage allowance eligibility data")
-      fetchResponse.code shouldBe NOT_FOUND
+      fetchResponse.map(status(_) shouldBe NOT_FOUND)
+    }
+
+    Scenario("Fetch Marriage allowance eligibility data returns 415 for missing header") {
+      When("I fetch marriage allowance eligibility data for a given utr and taxYear with no Content-Type header")
+      val fetchRequest =
+        FakeRequest(
+          "POST",
+          "/marriage-allowance/citizen/eligibility",
+          FakeHeaders(Seq()),
+          payload("AB000003D", "Firstname", "Surname", "1980-01-01", "2014")
+        )
+      val fetchResponse = route(fakeApplication(), fetchRequest)
+
+      Then("the response should not contain marriage allowance eligibility data")
+      fetchResponse.map(status(_) shouldBe UNSUPPORTED_MEDIA_TYPE)
     }
   }
   
@@ -45,66 +82,84 @@ class MarriageAllowanceEligibilitySpec extends IntegrationTest {
   Feature("Prime marriage allowance eligibility with post") {
     Scenario("Prime Marriage allowance eligibility data is returned for the given nino and taxYear when primed with the default scenario") {
       When("I prime marriage allowance eligibility data for a given utr and taxYear")
-      val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", eligibleTrue)
+      generateUserWithDefaultData(Nino("AC000003D"))
+
+      val createUserRequest = FakeRequest("POST", "/nino/AC000003D/eligibility/2016-17", FakeHeaders(Seq(HeaderNames.CONTENT_TYPE -> "application/json")), eligibleTrue)
+      val primeResponse = route(fakeApplication(), createUserRequest)
 
       Then("the response should indicate that marriage allowance eligibility data has been created")
-      primeResponse.code shouldBe CREATED
+      primeResponse.map(status(_) shouldBe CREATED)
 
       And("I request marriage allowance eligibility data for a given utr and taxYear with post")
-      val fetchResponse = fetchMarriageAllowanceEligibilityPost("AC000003D", "Firstname", "Surname", "1980-01-01", "2016")
+      val fetchRequest =
+        FakeRequest(
+          "POST",
+          "/marriage-allowance/citizen/eligibility",
+          FakeHeaders(Seq(HeaderNames.CONTENT_TYPE -> "application/json")),
+          payload("AC000003D", "Firstname", "Surname", "1980-01-01", "2016")
+        )
+      val fetchResponse = route(fakeApplication(), fetchRequest)
 
       And("The response should contain marriage allowance eligibility data")
-      fetchResponse.code shouldBe OK
-
-      fetchResponse.body shouldBe eligibleTrue
-
-      (Json.parse(fetchResponse.body) \ "eligible").get.toString() shouldBe "true"
+      fetchResponse.map {
+        response =>
+          status(response) shouldBe OK
+          contentAsString(response) shouldBe eligibleTrue
+      }
     }
-  }
 
-
-  Feature("Prime marriage allowance eligibility with post (version agnostic)") {
-    Scenario("Marriage allowance eligibility data is returned for the given nino and taxYear (version agnostic) when primed with the default scenario") {
+    Scenario("Prime Marriage allowance eligibility data is NotFound for the incorrect nino when primed with the default scenario") {
       When("I prime marriage allowance eligibility data for a given utr and taxYear")
-      val primeResponse = primeMarriageAllowanceEligibility("AC000003D", "2016-17", eligibleTrue)
+      generateUserWithDefaultData(Nino("AC000003D"))
+
+      val createUserRequest = FakeRequest("POST", "/nino/AC000003D/eligibility/2016-17", FakeHeaders(Seq(HeaderNames.CONTENT_TYPE -> "application/json")), eligibleTrue)
+      val primeResponse = route(fakeApplication(), createUserRequest)
 
       Then("the response should indicate that marriage allowance eligibility data has been created")
-      primeResponse.code shouldBe CREATED
+      primeResponse.map(status(_) shouldBe CREATED)
 
-      And("I request marriage allowance eligibility data for a given utr and taxYear with post v2")
-      val fetchResponse = fetchMarriageAllowanceEligibilityPost("AC000003D", "Firstname", "Surname", "1980-01-01", "2016", "2.0")
+      And("I request marriage allowance eligibility data with incorrect nino")
+      val fetchRequest =
+        FakeRequest(
+          "POST",
+          "/marriage-allowance/citizen/eligibility",
+          FakeHeaders(Seq(HeaderNames.CONTENT_TYPE -> "application/json")),
+          payload("AB000003D", "Firstname", "Surname", "1980-01-01", "2016")
+        )
+      val fetchResponse = route(fakeApplication(), fetchRequest)
 
       And("The response should contain marriage allowance eligibility data")
-      fetchResponse.code shouldBe OK
+      fetchResponse.map {
+        response =>
+          status(response) shouldBe NOT_FOUND
+      }
+    }
 
-      fetchResponse.body shouldBe eligibleTrue
+    Scenario("Prime Marriage allowance eligibility data is NotFound for the incorrect taxyear when primed with the default scenario") {
+      When("I prime marriage allowance eligibility data for a given utr and taxYear")
+      generateUserWithDefaultData(Nino("AC000003D"))
 
-      (Json.parse(fetchResponse.body) \ "eligible").get.toString() shouldBe "true"
+      val createUserRequest = FakeRequest("POST", "/nino/AC000003D/eligibility/2016-17", FakeHeaders(Seq(HeaderNames.CONTENT_TYPE -> "application/json")), eligibleTrue)
+      val primeResponse = route(fakeApplication(), createUserRequest)
+
+      Then("the response should indicate that marriage allowance eligibility data has been created")
+      primeResponse.map(status(_) shouldBe CREATED)
+
+      And("I request marriage allowance eligibility data with incorrect taxyear")
+      val fetchRequest =
+        FakeRequest(
+          "POST",
+          "/marriage-allowance/citizen/eligibility",
+          FakeHeaders(Seq(HeaderNames.CONTENT_TYPE -> "application/json")),
+          payload("AC000003D", "Firstname", "Surname", "1980-01-01", "2014")
+        )
+      val fetchResponse = route(fakeApplication(), fetchRequest)
+
+      And("The response should contain marriage allowance eligibility data")
+      fetchResponse.map {
+        response =>
+          status(response) shouldBe NOT_FOUND
+      }
     }
   }
-
-  private def primeMarriageAllowanceEligibility(nino: String, taxYear: String, payload: String) =
-    postEndpoint(s"nino/$nino/eligibility/$taxYear", payload)
-
-  private def fetchMarriageAllowanceEligibilityPost(nino: String, firstname: String, surname: String, dateOfBirth: String, taxYearStart: String, version: String = "1.0") = {
-    val payload =
-      s"""
-         |{
-         |"nino": "$nino",
-         |"firstname": "$firstname",
-         |"surname": "$surname",
-         |"dateOfBirth": "$dateOfBirth",
-         |"taxYearStart": "$taxYearStart"
-         |}
-         |""".stripMargin
-
-    checkIfJsonIsValid(payload)
-
-    postEndpoint("marriage-allowance/citizen/eligibility", payload, version)
-  }
-
-  private def checkIfJsonIsValid(json: String) = {
-    Json.parse(json).validate[EligibilityRequest] shouldBe a[JsSuccess[_]]
-  }
-
 }
