@@ -39,7 +39,7 @@ class ApiPlatformTestUserConnectorSpec extends UnitSpec with GuiceOneAppPerSuite
   val individual = TestIndividual(nino, IndividualDetails("Heather", "Ling", LocalDate.parse("1983-09-18")))
 
   trait Setup {
-    implicit val hc = HeaderCarrier()
+    implicit val hc: HeaderCarrier = HeaderCarrier()
 
     lazy val underTest: ApiPlatformTestUserConnector =
       app.injector.instanceOf[ApiPlatformTestUserConnector]

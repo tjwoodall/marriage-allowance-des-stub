@@ -45,7 +45,7 @@ class MarriageAllowanceStatusSpec extends PlaySpec with MockitoMocking {
     val fetchRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json")
     val createRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json").withBody(jsonBody)
 
-    implicit val headerCarrier = HeaderCarrier()
+    implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
     val underTest = new StatusController(mockStatusService, stubControllerComponents())
 

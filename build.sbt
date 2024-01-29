@@ -14,7 +14,7 @@ lazy val microservice = (project in file("."))
     headerSettings(IntegrationTest),
     automateHeaderSettings(IntegrationTest),
     scalaSettings,
-    scalaVersion := "2.13.10",
+    scalaVersion := "2.13.12",
     majorVersion := 0,
     defaultSettings(),
     routesImport += "controllers.Binders._",

@@ -40,7 +40,7 @@ class MarriageAllowanceEligibilitySpec extends PlaySpec with MockitoMocking {
   trait Setup {
     val fetchRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json").withBody[JsValue](Json.parse("""{"nino":"AA000003D", "firstname": "John", "surname": "Smith", "dateOfBirth": "1980-01-01", "taxYearStart": "2020-21"}"""))
     val createRequest = FakeRequest().withHeaders("Accept" -> "application/vnd.hmrc.1.0+json").withBody[JsValue](Json.parse("""{"eligible":true}"""))
-    implicit val headerCarrier = HeaderCarrier()
+    implicit val headerCarrier: HeaderCarrier = HeaderCarrier()
 
     val underTest = new EligibilityController(mockElgibilityService, stubControllerComponents())
 
