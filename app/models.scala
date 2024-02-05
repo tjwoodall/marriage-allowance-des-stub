@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 package object models {
-  implicit val marriageAllowanceStatusCreationRequest = Json.format[MarriageAllowanceStatusCreationRequest]
-  implicit val marriageAllowanceStatusSummaryResponseFormat = Json.format[MarriageAllowanceStatusSummaryResponse]
-  implicit val marriageAllowanceStatusSummaryFormat = Json.format[StatusSummary]
-  implicit val marriageAllowanceEligibilityCreationRequest = Json.format[MarriageAllowanceEligibilityCreationRequest]
-  implicit val marriageAllowanceEligibilitySummaryResponseFormat = Json.format[MarriageAllowanceEligibilitySummaryResponse]
-  implicit val marriageAllowanceEligibilitySummaryFormat = Json.format[EligibilitySummary]
+  implicit val marriageAllowanceStatusCreationRequest: OFormat[MarriageAllowanceStatusCreationRequest] = Json.format[MarriageAllowanceStatusCreationRequest]
+  implicit val marriageAllowanceStatusSummaryResponseFormat: OFormat[MarriageAllowanceStatusSummaryResponse] = Json.format[MarriageAllowanceStatusSummaryResponse]
+  implicit val marriageAllowanceStatusSummaryFormat: OFormat[StatusSummary] = Json.format[StatusSummary]
+  implicit val marriageAllowanceEligibilityCreationRequest: OFormat[MarriageAllowanceEligibilityCreationRequest] = Json.format[MarriageAllowanceEligibilityCreationRequest]
+  implicit val marriageAllowanceEligibilitySummaryResponseFormat: OFormat[MarriageAllowanceEligibilitySummaryResponse] = Json.format[MarriageAllowanceEligibilitySummaryResponse]
+  implicit val marriageAllowanceEligibilitySummaryFormat: OFormat[EligibilitySummary] = Json.format[EligibilitySummary]
 
-  implicit val apiAccessFormat = Json.format[APIAccess]
+  implicit val apiAccessFormat: OFormat[APIAccess] = Json.format[APIAccess]
 
-  implicit val individualDetailsFormat = Json.format[IndividualDetails]
-  implicit val testIndividualFormat = Json.format[TestIndividual]
+  implicit val individualDetailsFormat: OFormat[IndividualDetails] = Json.format[IndividualDetails]
+  implicit val testIndividualFormat: OFormat[TestIndividual] = Json.format[TestIndividual]
 }

@@ -14,7 +14,7 @@ lazy val microservice = (project in file("."))
     headerSettings(IntegrationTest),
     automateHeaderSettings(IntegrationTest),
     scalaSettings,
-    scalaVersion := "2.13.10",
+    scalaVersion := "2.13.12",
     majorVersion := 0,
     defaultSettings(),
     routesImport += "controllers.Binders._",
@@ -43,4 +43,4 @@ lazy val microservice = (project in file("."))
 // Coverage configuration
 coverageMinimumStmtTotal := 17.27
 coverageFailOnMinimum := true
-coverageExcludedPackages := "<empty>;com.kenshoo.play.metrics.*;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;.*Routes.*;.*config.*;"
+coverageExcludedPackages := "<empty>;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;.*Routes.*;.*config.*;"
