@@ -24,8 +24,11 @@ import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.{BeforeAndAfterEach, TestData}
 import org.scalatestplus.play.guice.GuiceOneAppPerTest
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.FakeRequest
 import play.api.{Application, Mode}
+
+import scala.concurrent.Future
 
 /**
   * Testcase to verify the capability of integration with the API platform.
@@ -59,23 +62,23 @@ class PlatformIntegrationSpec extends UnitSpec with ScalaFutures with BeforeAndA
 
   trait Setup {
     val documentationController: DocumentationController = app.injector.instanceOf[DocumentationController]
-    val request = FakeRequest()
+    val request: FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
   }
 
   "microservice" should {
 
     "provide definition endpoint" in new Setup {
-      val result = documentationController.definition()(request)
+      val result: Future[Result] = documentationController.definition()(request)
       status(result) shouldBe 200
     }
 
     "provide OAS conf endpoint" in new Setup {
-      val result = documentationController.yaml("1.0", "application.yaml")(request)
+      val result: Future[Result] = documentationController.yaml("1.0", "application.yaml")(request)
       status(result) shouldBe 200
     }
   }
 
-  override protected def afterEach() = {
+  override protected def afterEach(): Unit = {
     wireMockServer.stop()
     wireMockServer.resetMappings()
   }

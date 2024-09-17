@@ -23,26 +23,26 @@ import play.api.http.Status.NOT_FOUND
 import uk.gov.hmrc.domain.Nino
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpReadsInstances.readEitherOf
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{NotFoundException, _}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ApiPlatformTestUserConnector @Inject()(
                                               appConfig: ApplicationConfig,
-                                              http: HttpClient
+                                              http: HttpClientV2
                                             )(implicit ec: ExecutionContext) {
 
-  val serviceUrl: String = appConfig.apiTestUserUrl
+  private val serviceUrl: String = appConfig.apiTestUserUrl
 
-  def fetchByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] = {
+  def fetchByNino(nino: Nino)(implicit hc: HeaderCarrier): Future[TestIndividual] =
     http
-      .GET[Either[UpstreamErrorResponse, HttpResponse]](s"$serviceUrl/individuals/nino/$nino")
+      .get(url"$serviceUrl/individuals/nino/$nino")
+      .execute[Either[UpstreamErrorResponse, HttpResponse]]
       .map {
         case Right(response) => response.json.as[TestIndividual]
-        case Left(error) => {
+        case Left(error) =>
           if (error.statusCode == NOT_FOUND) throw new NotFoundException(error.message)
           else throw error
-        }
       }
-  }
 }
