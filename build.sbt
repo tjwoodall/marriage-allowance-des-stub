@@ -10,6 +10,7 @@ ThisBuild / majorVersion := 0
 lazy val microservice = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .settings(
+    PlayKeys.playDefaultPort := 9687,
     scalaSettings,
     defaultSettings(),
     routesImport += "controllers.Binders._",
@@ -17,7 +18,6 @@ lazy val microservice = (project in file("."))
     libraryDependencies ++= AppDependencies.all,
     retrieveManaged := true,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
     resolvers ++= Seq(
       Resolver.jcenterRepo
@@ -36,11 +36,24 @@ lazy val microservice = (project in file("."))
   ),
 )
 // Coverage configuration
-coverageMinimumStmtTotal := 17.27
+val ScoverageExclusionPatterns = List(
+  "<empty>",
+  ".*definition.*",
+  "prod.*",
+  "testOnlyDoNotUseInAppConf.*",
+  "app.*",
+  "uk.gov.hmrc.BuildInfo",
+  ".*Routes.*",
+  ".*config.*"
+)
+coverageMinimumStmtTotal := 94.00
 coverageFailOnMinimum := true
-coverageExcludedPackages := "<empty>;.*definition.*;prod.*;testOnlyDoNotUseInAppConf.*;app.*;uk.gov.hmrc.BuildInfo;.*Routes.*;.*config.*;"
+coverageExcludedPackages := ScoverageExclusionPatterns.mkString("", ";", "")
 
-val it: Project = project.in(file("it"))
+val it: Project = project
   .enablePlugins(PlayScala)
   .dependsOn(microservice % "test->test")
   .settings(itSettings())
+
+addCommandAlias("runAllTests", ";test;it/test;")
+addCommandAlias("runAllChecks", ";clean;coverageOn;runAllTests;coverageOff;coverageAggregate;")

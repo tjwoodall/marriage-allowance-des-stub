@@ -33,14 +33,12 @@ API microservices which this stubs behaviour for are currently:
 
 ## Running the tests
 ```
-./run_all_test.sh
+sbt runAllTests
 ```
 
-## Running the service locally
-
-To run the service locally on port `9687`:
+## Running tests, sCoverage and generating the coverage report
 ```
-./run_local.sh
+sbt runAllChecks
 ```
 
 Alternatively, use Service Manager to start `MARRIAGE_ALLOWANCE_DES_STUB`
