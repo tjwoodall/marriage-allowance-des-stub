@@ -2,7 +2,6 @@
 @import play.api.libs.json.Json
 @(access: String => APIAccess)
 {
-  "scopes":[],
   "api": {
     "name": "Marriage Allowance Test Support",
     "description": "Lets you set up test data for the Marriage Allowance API.",
