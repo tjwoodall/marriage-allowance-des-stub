@@ -17,7 +17,7 @@
 package repositories
 
 import models.StatusSummary
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers._
 import org.scalatestplus.play.PlaySpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
@@ -25,7 +25,7 @@ import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
 import scala.concurrent.ExecutionContext.Implicits.global
 
 class MarriageAllowanceStatusRepositorySpec extends PlaySpec with DefaultPlayMongoRepositorySupport[StatusSummary] {
-  override lazy val repository = new MarriageAllowanceStatusRepository(mongoComponent)
+  override val repository: MarriageAllowanceStatusRepository = new MarriageAllowanceStatusRepository(mongoComponent)
 
   "MarriageAllowanceStatusRepository" must {
     "return a status summary" when {
@@ -33,18 +33,19 @@ class MarriageAllowanceStatusRepositorySpec extends PlaySpec with DefaultPlayMon
         val statusSummary = StatusSummary("utr1", "2021-22", "true", false)
         val storeResult = await(repository.store(statusSummary))
 
-        storeResult shouldBe statusSummary
+        storeResult.shouldBe(statusSummary)
         val fetchResult = await(repository.fetch("utr1", "2021-22"))
 
-        fetchResult.isEmpty shouldBe false
-        fetchResult.get shouldBe statusSummary
+        fetchResult.isEmpty.shouldBe(false)
+        fetchResult.get.shouldBe(statusSummary)
       }
     }
+
     "return nothing" when {
       "there is no status summary that matches in the database" in {
         val result = await(repository.fetch("utr1", "2021-22"))
 
-        result.isEmpty shouldBe true
+        result.isEmpty.shouldBe(true)
       }
     }
   }

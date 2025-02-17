@@ -16,10 +16,9 @@
 
 package models
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-final case class StatusSummary(
+ final case class StatusSummary(
   utr: String,
   taxYear: String,
   status: String,
@@ -28,11 +27,6 @@ final case class StatusSummary(
 
 object StatusSummary {
 
-  implicit val format: Format[StatusSummary] = {
-    ( (__ \ "utr").format[String]
-    ~ (__ \ "taxYear").format[String]
-    ~ (__ \ "status").format[String]
-    ~ (__ \ "deceased").format[Boolean]
-    )(StatusSummary.apply, unlift(StatusSummary.unapply))
-  }
+  implicit val format: Format[StatusSummary] = Json.format[StatusSummary]
+
 }

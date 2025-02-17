@@ -25,6 +25,7 @@ import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.HttpReadsInstances.readEitherOf
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{NotFoundException, _}
+import models.testIndividualFormat
 
 import scala.concurrent.{ExecutionContext, Future}
 

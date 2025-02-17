@@ -51,7 +51,7 @@ object EligibilityRequest extends ConstraintReads {
       (JsPath \ "surname").read[String] and
       (JsPath \ "dateOfBirth").read[LocalDate] and
       (JsPath \ "taxYearStart").read[String]
-    )(EligibilityRequest.apply _)
+    )(EligibilityRequest.apply)
 
 
   implicit val writes: Writes[EligibilityRequest] = Json.writes[EligibilityRequest]
