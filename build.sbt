@@ -47,9 +47,21 @@ val ScoverageExclusionPatterns = List(
   ".*Routes.*",
   ".*config.*"
 )
+
+val ScoverageExclusionFiles = List(
+  ".*Binders.*",
+  ".*Status.*",
+  ".*Errors.*",
+  ".*Responses.*",
+  ".*APIAccess.*",
+  ".*ApiPlatformTestUserConnector*."
+
+
+)
 coverageMinimumStmtTotal := 94.00
 coverageFailOnMinimum := true
 coverageExcludedPackages := ScoverageExclusionPatterns.mkString("", ";", "")
+coverageExcludedFiles := ScoverageExclusionFiles.mkString("", ";", "")
 
 val it: Project = project
   .enablePlugins(PlayScala)
