@@ -17,7 +17,7 @@
 package repositories
 
 import models.StatusSummary
-import org.scalatest.matchers.should.Matchers._
+import org.scalatest.matchers.should.Matchers.shouldBe
 import org.scalatestplus.play.PlaySpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
@@ -33,11 +33,11 @@ class MarriageAllowanceStatusRepositorySpec extends PlaySpec with DefaultPlayMon
         val statusSummary = StatusSummary("utr1", "2021-22", "true", false)
         val storeResult = await(repository.store(statusSummary))
 
-        storeResult.shouldBe(statusSummary)
+        storeResult shouldBe statusSummary
         val fetchResult = await(repository.fetch("utr1", "2021-22"))
 
-        fetchResult.isEmpty.shouldBe(false)
-        fetchResult.get.shouldBe(statusSummary)
+        fetchResult.isEmpty shouldBe false
+        fetchResult.get shouldBe statusSummary
       }
     }
 
@@ -45,7 +45,7 @@ class MarriageAllowanceStatusRepositorySpec extends PlaySpec with DefaultPlayMon
       "there is no status summary that matches in the database" in {
         val result = await(repository.fetch("utr1", "2021-22"))
 
-        result.isEmpty.shouldBe(true)
+        result.isEmpty shouldBe true
       }
     }
   }

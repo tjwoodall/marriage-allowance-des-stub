@@ -17,10 +17,10 @@
 package repositories
 
 import models.EligibilitySummary
-import org.scalatest.matchers.should.Matchers._
 import org.scalatestplus.play.PlaySpec
 import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import uk.gov.hmrc.mongo.test.DefaultPlayMongoRepositorySupport
+import org.scalatest.matchers.should.Matchers.shouldBe
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -33,18 +33,18 @@ class MarriageAllowanceEligibilityRepositorySpec extends PlaySpec with DefaultPl
         val eligibilitySummary = EligibilitySummary("nino", "2021-22", "john", "smith", "19-03-75", true)
         val storeResult = await(repository.store(eligibilitySummary))
 
-        storeResult.shouldBe (eligibilitySummary)
+        storeResult shouldBe eligibilitySummary
         val fetchResult = await(repository.fetch("nino", "2021-22"))
 
-        fetchResult.isEmpty.shouldBe(false)
-        fetchResult.get.shouldBe (eligibilitySummary)
+        fetchResult.isEmpty shouldBe false
+        fetchResult.get shouldBe eligibilitySummary
       }
     }
     "return nothing" when {
       "there is no status summary that matches in the database" in {
         val result = await(repository.fetch("nino", "2021-22"))
 
-        result.isEmpty.shouldBe (true)
+        result.isEmpty shouldBe true
       }
     }
   }
