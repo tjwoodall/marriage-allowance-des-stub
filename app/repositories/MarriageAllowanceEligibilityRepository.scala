@@ -22,13 +22,14 @@ import models._
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.MongoComponent
 import org.mongodb.scala.model.{Filters, IndexModel, Indexes}
+import org.mongodb.scala.{ObservableFuture,SingleObservableFuture}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class MarriageAllowanceEligibilityRepository @Inject()(
-  mongoComponent: MongoComponent
-)(implicit ec: ExecutionContext) extends PlayMongoRepository[EligibilitySummary](
+                                                        mongoComponent: MongoComponent
+                                                      )(implicit ec: ExecutionContext) extends PlayMongoRepository[EligibilitySummary](
   mongoComponent = mongoComponent,
   collectionName = "marriage-allowance-eligibility",
   domainFormat = EligibilitySummary.format,

@@ -3,8 +3,8 @@ import play.sbt.PlayImport.ws
 
 object AppDependencies {
 
-  private val hmrcMongoVersion = "2.2.0"
-  private val bootstrapVersion = "9.4.0"
+  private val hmrcMongoVersion = "2.5.0"
+  private val bootstrapVersion = "9.8.0"
   private val playSuffix = "play-30"
 
   lazy val compile: Seq[ModuleID] = Seq(
@@ -16,8 +16,7 @@ object AppDependencies {
 
   lazy val test: Seq[ModuleID] = Seq(
     "uk.gov.hmrc.mongo"            %% s"hmrc-mongo-test-$playSuffix" % hmrcMongoVersion,
-    "uk.gov.hmrc"                  %% s"bootstrap-test-$playSuffix"  % bootstrapVersion,
-    "org.scalaj"                   %% "scalaj-http"                  % "2.4.2"
+    "uk.gov.hmrc"                  %% s"bootstrap-test-$playSuffix"  % bootstrapVersion
   ).map(_ % "test")
 
   val all: Seq[ModuleID] = compile ++ test

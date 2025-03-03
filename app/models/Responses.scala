@@ -16,7 +16,31 @@
 
 package models
 
+import play.api.libs.json._
+
 sealed trait MarriageAllowanceResponse
 
 final case class MarriageAllowanceStatusSummaryResponse(status: String, deceased: Boolean) extends MarriageAllowanceResponse
 final case class MarriageAllowanceEligibilitySummaryResponse(eligible: Boolean) extends MarriageAllowanceResponse
+
+object MarriageAllowanceResponse {
+  implicit val marriageAllowanceStatusSummaryResponseFormat: OFormat[MarriageAllowanceStatusSummaryResponse] = Json.format[MarriageAllowanceStatusSummaryResponse]
+  implicit val marriageAllowanceEligibilitySummaryResponseFormat: OFormat[MarriageAllowanceEligibilitySummaryResponse] = Json.format[MarriageAllowanceEligibilitySummaryResponse]
+
+  implicit val marriageAllowanceResponseFormat: Format[MarriageAllowanceResponse] = new Format[MarriageAllowanceResponse] {
+    override def reads(json: JsValue): JsResult[MarriageAllowanceResponse] = {
+      (json \ "status").validate[String].map { _ =>
+        Json.fromJson[MarriageAllowanceStatusSummaryResponse](json).getOrElse {
+          Json.fromJson[MarriageAllowanceEligibilitySummaryResponse](json).getOrElse {
+            throw new RuntimeException("Unknown response type")
+          }
+        }
+      }
+    }
+
+    override def writes(o: MarriageAllowanceResponse): JsValue = o match {
+      case statusSummary: MarriageAllowanceStatusSummaryResponse => Json.toJson(statusSummary)
+      case eligibilitySummary: MarriageAllowanceEligibilitySummaryResponse => Json.toJson(eligibilitySummary)
+    }
+  }
+}

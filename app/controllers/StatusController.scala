@@ -24,6 +24,7 @@ import play.api.mvc.{Action, AnyContent, ControllerComponents}
 import services.StatusService
 import uk.gov.hmrc.domain.SaUtr
 import uk.gov.hmrc.play.bootstrap.backend.controller.BackendController
+import models.marriageAllowanceStatusCreationRequest
 
 import scala.concurrent.ExecutionContext
 
@@ -49,7 +50,6 @@ class StatusController @Inject()(
       for {
         result <- service.create(utr.utr, taxYear.startYr, createStatusRequest.status, createStatusRequest.deceased)
       } yield Created(Json.toJson(MarriageAllowanceStatusSummaryResponse(result.status, result.deceased)))
-
     } recover {
       case e =>
         logger.error("An error occurred while creating test data", e)

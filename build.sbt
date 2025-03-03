@@ -4,7 +4,7 @@ import uk.gov.hmrc.sbtdistributables.SbtDistributablesPlugin
 lazy val appName = "marriage-allowance-des-stub"
 
 
-ThisBuild / scalaVersion := "2.13.14"
+ThisBuild / scalaVersion := "3.6.2"
 ThisBuild / majorVersion := 0
 
 lazy val microservice = (project in file("."))
@@ -26,14 +26,15 @@ lazy val microservice = (project in file("."))
   scalacOptions ++= Seq(
     "-feature",
     "-Werror",
-    "-Wconf:cat=unused-imports&site=.*views\\.html.*:s",
-    "-Wconf:cat=unused-imports&site=.*views\\.txt.*:s",
-    "-Wconf:cat=unused-imports&site=<empty>:s",
-    "-Wconf:cat=unused&src=.*RoutesPrefix\\.scala:s",
-    "-Wconf:cat=unused&src=.*Routes\\.scala:s",
-    "-Wconf:cat=unused&src=.*ReverseRoutes\\.scala:s",
-    "-Wconf:cat=unused&src=.*JavaScriptReverseRoutes\\.scala:s"
-  ),
+    "-Xfatal-warnings",
+    "-Wconf:src=routes/.*:silent",
+    "-Wconf:src=twirl/.*:silent",
+    "-Wconf:src=target/.*:silent",
+    "-Wconf:msg=Flag.*repeatedly:silent",
+    "-Wconf:msg=.*-Wunused.*:silent",
+  )
+
+
 )
 // Coverage configuration
 val ScoverageExclusionPatterns = List(
@@ -46,9 +47,21 @@ val ScoverageExclusionPatterns = List(
   ".*Routes.*",
   ".*config.*"
 )
+
+val ScoverageExclusionFiles = List(
+  ".*Binders.*",
+  ".*Status.*",
+  ".*Errors.*",
+  ".*Responses.*",
+  ".*APIAccess.*",
+  ".*ApiPlatformTestUserConnector*."
+
+
+)
 coverageMinimumStmtTotal := 94.00
 coverageFailOnMinimum := true
 coverageExcludedPackages := ScoverageExclusionPatterns.mkString("", ";", "")
+coverageExcludedFiles := ScoverageExclusionFiles.mkString("", ";", "")
 
 val it: Project = project
   .enablePlugins(PlayScala)

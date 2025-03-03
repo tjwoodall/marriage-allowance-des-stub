@@ -16,27 +16,19 @@
 
 package models
 
-import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 final case class EligibilitySummary(
-  nino: String,
-  taxYearStart: String,
-  firstname: String,
-  surname: String,
-  dateOfBirth: String,
-  eligible: Boolean
+   nino: String,
+   taxYearStart: String,
+   firstname: String,
+   surname: String,
+   dateOfBirth: String,
+   eligible: Boolean
 )
 
 object EligibilitySummary {
 
-  implicit val format: Format[EligibilitySummary] = {
-    ( (__ \ "nino").format[String]
-    ~ (__ \ "taxYearStart").format[String]
-    ~ (__ \ "firstname").format[String]
-    ~ (__ \ "surname").format[String]
-    ~ (__ \ "dateOfBirth").format[String]
-    ~ (__ \ "eligible").format[Boolean]
-    )(EligibilitySummary.apply, unlift(EligibilitySummary.unapply))
-  }
+  implicit val format: Format[EligibilitySummary] = Json.format[EligibilitySummary]
+
 }

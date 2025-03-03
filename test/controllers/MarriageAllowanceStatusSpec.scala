@@ -17,7 +17,7 @@
 package controllers
 
 import models.{StatusSummary, TaxYear}
-import org.mockito.BDDMockito.given
+import org.mockito.Mockito.when
 import org.scalatestplus.play.PlaySpec
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -56,7 +56,7 @@ class MarriageAllowanceStatusSpec extends PlaySpec with MockitoMocking {
 
     "return the response when the call to the service returns an item" in new Setup {
 
-      given(mockStatusService.fetch("utr", "2014")).willReturn(Future(Some(deceasedStatusSummary)))
+      when(mockStatusService.fetch("utr", "2014")).thenReturn(Future(Some(deceasedStatusSummary)))
 
       val result = underTest.find(SaUtr("utr"), "2014")(fetchRequest)
 
@@ -65,7 +65,7 @@ class MarriageAllowanceStatusSpec extends PlaySpec with MockitoMocking {
     }
     "return a notFound response when the call to the service returns nothing" in new Setup {
 
-      given(mockStatusService.fetch("utr", "2014")).willReturn(Future(None))
+      when(mockStatusService.fetch("utr", "2014")).thenReturn(Future(None))
 
       val result = underTest.find(SaUtr("utr"), "2014")(fetchRequest)
 
@@ -73,7 +73,7 @@ class MarriageAllowanceStatusSpec extends PlaySpec with MockitoMocking {
     }
     "return an internal server error when the fetching fails" in new Setup {
 
-      given(mockStatusService.fetch("utr", "2014")).willReturn(Future.failed(new NullPointerException))
+      when(mockStatusService.fetch("utr", "2014")).thenReturn(Future.failed(new NullPointerException))
 
       val result = underTest.find(SaUtr("utr"), "2014")(fetchRequest)
 
@@ -85,7 +85,7 @@ class MarriageAllowanceStatusSpec extends PlaySpec with MockitoMocking {
 
     "return a CREATED response with payload matching the request" in new Setup {
 
-      given(mockStatusService.create("utr", "2014", "Recipient", true)).willReturn(Future(deceasedStatusSummary))
+      when(mockStatusService.create("utr", "2014", "Recipient", true)).thenReturn(Future(deceasedStatusSummary))
 
       val result = underTest.create(SaUtr("utr"), TaxYear("2014-15"))(createRequest)
 
@@ -94,7 +94,7 @@ class MarriageAllowanceStatusSpec extends PlaySpec with MockitoMocking {
     }
     "return a INTERNAL_SERVER_ERROR response when the creation fails" in new Setup {
 
-      given(mockStatusService.create("utr", "2014", "Recipient", true)).willReturn(Future.failed(new NullPointerException))
+      when(mockStatusService.create("utr", "2014", "Recipient", true)).thenReturn(Future.failed(new NullPointerException))
 
       val result = underTest.create(SaUtr("utr"), TaxYear("2014-15"))(createRequest)
 
