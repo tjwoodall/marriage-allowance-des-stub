@@ -18,10 +18,7 @@ lazy val microservice = (project in file("."))
     libraryDependencies ++= AppDependencies.all,
     retrieveManaged := true,
     Compile / unmanagedResourceDirectories += baseDirectory.value / "resources",
-    ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always,
-    resolvers ++= Seq(
-      Resolver.jcenterRepo
-    )
+    ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
   ).settings(
   scalacOptions ++= Seq(
     "-feature",
