@@ -43,9 +43,6 @@ paths:
             schema:
               allOf:
               - $ref: '#/components/schemas/MarriageAllowanceTestSupportSaStatusrequest'
-              - example:
-                  status: Recipient
-                  deceased: false
             example:
               status: Recipient
               deceased: false
@@ -59,9 +56,6 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/MarriageAllowanceTestSupportSaStatusresponse'
-                - example:
-                    status: Recipient
-                    deceased: false
               example:
                 status: Recipient
                 deceased: false
@@ -104,8 +98,6 @@ paths:
             schema:
               allOf:
               - $ref: '#/components/schemas/MarriageAllowanceTestSupportNinoEligibilityrequest'
-              - example:
-                  eligible: true
             example:
               eligible: true
         required: true
@@ -118,8 +110,6 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/MarriageAllowanceTestSupportNinoEligibilityresponse'
-                - example:
-                    eligible: true
               example:
                 eligible: true
         '400':
@@ -130,8 +120,6 @@ paths:
               schema:
                 allOf:
                 - $ref: '#/components/schemas/errorResponse'
-                - example:
-                    code: TEST_USER_NOT_FOUND
               examples:
                 invalidNino:
                   description: No test individual exists with the specified National Insurance number
