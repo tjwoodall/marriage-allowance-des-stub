@@ -61,7 +61,7 @@ paths:
                 deceased: false
       deprecated: false
       security:
-        - application-restricted: []
+        - Application-Restricted: []
   /marriage-allowance-test-support/nino/{nino}/eligibility/{taxYear}:
     post:
       tags:
@@ -127,10 +127,10 @@ paths:
                     code: TEST_USER_NOT_FOUND
       deprecated: false
       security:
-        - application-restricted: []
+        - Application-Restricted: []
 components:
   securitySchemes:
-    application-restricted:
+    Application-Restricted:
       type: oauth2
       description: HMRC supports OAuth 2.0 for authenticating [application-restricted](https://developer.service.hmrc.gov.uk/api-documentation/docs/authorisation/application-restricted-endpoints) API requests using an OAuth 2.0 Bearer Token in the Authorization header.
       flows:
