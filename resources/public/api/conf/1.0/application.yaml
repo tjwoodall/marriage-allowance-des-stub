@@ -6,6 +6,8 @@ info:
 servers:
 - url: https://api.service.hmrc.gov.uk
   variables: {}
+- url: https://test-api.service.hmrc.gov.uk
+  variables: {}
 paths:
   /marriage-allowance-test-support/sa/{utr}/status/{taxYear}:
     post:
